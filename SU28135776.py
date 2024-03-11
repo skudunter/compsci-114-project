@@ -77,6 +77,36 @@ def print_board(board):
         stdio.writeln(get_row_separator())
 
 
+def check_sink_range(row, col):
+    if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
+        return False
+    else:
+        return True
+
+
+def check_peice_range(row, col):
+    if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
+        return True
+    else:
+        return False
+
+
+def check_index_on_board(row, col):
+    if (row not in range(0, NUM_ROWS) or col not in range(0, NUM_COLUMNS)):
+        return False
+    return True
+
+
+def check_peice_type(peice_object, peice_type):
+    if (peice_object == 's'):
+        if (peice_type not in ['1', '2']):
+            return False
+    elif (peice_object in ['l', 'x', 'd']):
+        if (peice_type not in ['a', 'b', 'c', 'd']):
+            return False
+    return True
+
+
 def get_board_setup_from_commandline():
     stdio.writeln('')
     stdio.writeln('Enter board setup:')
@@ -92,30 +122,49 @@ def get_board_setup_from_commandline():
         symbols = line.split(" ")
         if (len(symbols) == 4):
             # either a peice or a sink
-            try:
-                if (symbols[0] == "s"):
-                    # a sink
-                    x = int(symbols[3])
-                    y = (9 -int(symbols[2])) % 9
-                    board[y][x] = "s"
-                    if (symbols[1] == "2"):
-                        # a 2x2 sink
-                        board[y][x+1] = "s"
-                        board[y-1][x] = "s"
-                        board[y-1][x+1] = "s"
-                        pass
+            if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
+                if (symbols[0] in ['l', 'x', 'd', 's']):
+                    if (check_peice_type(symbols[0], symbols[1])):
+                        if (symbols[0] == "s"):
+                            # a sink
+                            if (check_sink_range(int(symbols[2]), int(symbols[3]))):
+                                x = int(symbols[3])
+                                y = (9 - int(symbols[2])) % 9
+                                board[y][x] = "s"
+                                if (symbols[1] == "2"):
+                                    # a 2x2 sink
+                                    board[y][x+1] = "s"
+                                    board[y-1][x] = "s"
+                                    board[y-1][x+1] = "s"
+                            else:
+                                stdio.writeln(
+                                    "ERROR: Sink in the wrong position")
+                                exit()
+                        else:
+                            # a peice
+                            if (check_peice_range(int(symbols[2]), int(symbols[3]))):
+                                pass
+                            else:
+                                stdio.writeln(
+                                    "ERROR: Peice in the wrong position")
+                                exit()
+                    else:
+                        stdio.writeln(
+                            "ERROR: Invalid peice type " + symbols[1])
+                        exit()
                 else:
-                    # a peice
-                    pass
-            except:
-                stdio.writeln("Error with board setup input")
-                exit(1)
+                    stdio.writeln("ERROR: Invalid object type " + symbols[0])
+                    exit()
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[2] + " " + symbols[3] + " not on board")
+                exit()
         elif (len(symbols) == 3):
-          # a blocked field
-            try:
-                board[symbols[1]][symbols[2]] = 'x'
-            except:
-                stdio.writeln("Error with board setup input")
+            # a blocked field
+            board[symbols[1]][symbols[2]] = 'x'
+        else:
+            stdio.writeln("ERROR: Invalid input")
+            exit()
     return board
 
 
