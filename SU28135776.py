@@ -61,7 +61,9 @@ def print_board(board):
             return ' ' + piece
         elif piece.isupper():
             return ' ' + piece
-        return '  '
+        elif len(piece) == 2:
+            return piece
+        return "  "
 
     stdio.writeln('')
 
@@ -108,8 +110,8 @@ def check_peice_type(peice_object, peice_type):
 
 
 def get_board_setup_from_commandline():
-    stdio.writeln('')
-    stdio.writeln('Enter board setup:')
+    # stdio.writeln('')
+    # stdio.writeln('Enter board setup:')
 
     # init board 2d array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
@@ -130,20 +132,36 @@ def get_board_setup_from_commandline():
                             if (check_sink_range(int(symbols[2]), int(symbols[3]))):
                                 x = int(symbols[3])
                                 y = (9 - int(symbols[2])) % 9
-                                board[y][x] = "s"
+                                if (board[y][x] == ' '):
+                                    board[y][x] = "s"
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                    exit()
+
                                 if (symbols[1] == "2"):
                                     # a 2x2 sink
-                                    board[y][x+1] = "s"
-                                    board[y-1][x] = "s"
-                                    board[y-1][x+1] = "s"
+                                    if ((board[y][x+1] == " ") or (board[y-1][x] == " ") or (board[y-1][x+1] == " ")):
+                                        board[y][x+1] = "s"
+                                        board[y-1][x] = "s"
+                                        board[y-1][x+1] = "s"
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                        exit()
                             else:
                                 stdio.writeln(
                                     "ERROR: Sink in the wrong position")
                                 exit()
                         else:
                             # a peice
+                            x = int(symbols[3])
+                            y = (9 - int(symbols[2])) % 9
                             if (check_peice_range(int(symbols[2]), int(symbols[3]))):
-                                pass
+                                if (symbols[0] == 'l'):
+                                    board[y][x] = board[y][x]
+                                elif (symbols[0] == 'd'):
+                                    pass
                             else:
                                 stdio.writeln(
                                     "ERROR: Peice in the wrong position")
@@ -166,7 +184,12 @@ def get_board_setup_from_commandline():
             stdio.writeln("ERROR: Invalid input")
             exit()
     return board
-
+def check_piece_upright(row, col, board):
+    try:
+        upright = not (board[row][col] in ['a','b','c','d','A','B','C','D'] and (row != 9 and (board[row+1][col] == str((row * len(board) + col)) or board[row][col+1] == str((row * len(board) + col)))))
+    except:
+        upright = False
+    stdio.writeln(upright)
 
 def main():
     # make sure the input fits the criteria and updates the global vars,NUM_ROWS,NUM_COLUMS,GUI_MODE
@@ -175,7 +198,9 @@ def main():
     # read input from the commandline and update the board accordingly
     board = get_board_setup_from_commandline()
 
-    print_board(board)
+    print_board([['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], [
+                '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', 'a', '', '']])
+
     # main game loop
     while not GAME_OVER:
         pass
