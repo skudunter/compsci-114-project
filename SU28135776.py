@@ -8,7 +8,6 @@ GAME_OVER = False
 
 
 def check_input_validation():
-
     # checks whether the input conforms to the standards set out otherwise raises an error
     global NUM_ROWS, NUM_COLUMNS, GUI_MODE
     if len(sys.argv) > 4:
@@ -62,10 +61,9 @@ def print_board(board):
         elif piece.isupper():
             return ' ' + piece
         elif len(piece) == 2:
+            # number representing peice
             return piece
         return "  "
-
-    stdio.writeln('')
 
     # write all the numbers at the top
     stdio.writeln('    ' + '  '.join([str(i) for i in range(num_cols)]))
@@ -110,8 +108,6 @@ def check_peice_type(peice_object, peice_type):
 
 
 def get_board_setup_from_commandline():
-    # stdio.writeln('')
-    # stdio.writeln('Enter board setup:')
 
     # init board 2d array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
@@ -125,7 +121,7 @@ def get_board_setup_from_commandline():
         if (len(symbols) == 4):
             # either a peice or a sink
             if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
-                if (symbols[0] in ['l', 'x', 'd', 's']):
+                if (symbols[0] in ['l', 'd', 's']):
                     if (check_peice_type(symbols[0], symbols[1])):
                         if (symbols[0] == "s"):
                             # a sink
@@ -158,10 +154,41 @@ def get_board_setup_from_commandline():
                             x = int(symbols[3])
                             y = (9 - int(symbols[2])) % 9
                             if (check_peice_range(int(symbols[2]), int(symbols[3]))):
-                                if (symbols[0] == 'l'):
-                                    board[y][x] = board[y][x]
-                                elif (symbols[0] == 'd'):
-                                    pass
+                                if board[y][x] == ' ':  # empty field
+                                    if (symbols[0] == 'l'):
+                                        board[y][x] = symbols[1].lower()
+                                        if (symbols[1] == "d"):
+                                            if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
+                                                index = (int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                # pad the index on the right by a space if it is one digit
+                                                if (index < 10):
+                                                    index = " " + str(index)
+                                                board[y][x+1] = str(index)
+                                                board[y-1][x] = str(index)
+                                                board[y-1][x+1] = str(index)
+                                            else:
+                                                stdio.writeln(
+                                                    "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                                exit()
+                                    elif (symbols[0] == 'd'):
+                                        board[y][x] = symbols[1].upper()
+                                        if (symbols[1] == "d"):
+                                            if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
+                                                index = (int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                # pad the index on the right by a space if it is one digit
+                                                if (index < 10):
+                                                    index = " " + str(index)
+                                                board[y][x+1] = str(index)
+                                                board[y-1][x] = str(index)
+                                                board[y-1][x+1] = str(index)
+                                            else:
+                                                stdio.writeln(
+                                                    "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                                exit()
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                    exit()
                             else:
                                 stdio.writeln(
                                     "ERROR: Peice in the wrong position")
@@ -184,12 +211,16 @@ def get_board_setup_from_commandline():
             stdio.writeln("ERROR: Invalid input")
             exit()
     return board
+
+
 def check_piece_upright(row, col, board):
     try:
-        upright = not (board[row][col] in ['a','b','c','d','A','B','C','D'] and (row != 9 and (board[row+1][col] == str((row * len(board) + col)) or board[row][col+1] == str((row * len(board) + col)))))
+        upright = not (board[row][col] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'] and (row != 9 and (
+            board[row+1][col] == str((row * len(board) + col)) or board[row][col+1] == str((row * len(board) + col)))))
     except:
         upright = False
     stdio.writeln(upright)
+
 
 def main():
     # make sure the input fits the criteria and updates the global vars,NUM_ROWS,NUM_COLUMS,GUI_MODE
@@ -197,13 +228,10 @@ def main():
 
     # read input from the commandline and update the board accordingly
     board = get_board_setup_from_commandline()
-
-    print_board([['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], [
-                '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', 'a', '', '']])
-
+    print_board(board)
     # main game loop
-    while not GAME_OVER:
-        pass
+    # while not GAME_OVER:
+    #     pass
 
 
 if __name__ == "__main__":
