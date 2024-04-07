@@ -5,7 +5,6 @@ import stdio
 NUM_ROWS = 10
 NUM_COLUMNS = 10
 GUI_MODE = False
-GAME_OVER = False
 
 
 def check_input_validation():
@@ -75,6 +74,7 @@ def print_board(board):
             out += get_piece_display(i, j) + '|'
         stdio.writeln(out)
         stdio.writeln(get_row_separator())
+    stdio.writeln("")
 
 
 def check_sink_range(row, col):
@@ -135,7 +135,7 @@ def get_board_setup_from_commandline():
                             if (check_sink_range(int(symbols[2]), int(symbols[3]))):
                                 # sink is within the outer 3 columns and rows
                                 x = int(symbols[3])
-                                y = (9 - int(symbols[2])) % 10 #TODO works for 10X10 board test to see if it works for other cases aswell?
+                                y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
                                 if (board[y][x] == ' '):
                                     # empty field
                                     board[y][x] = "s"
@@ -176,7 +176,7 @@ def get_board_setup_from_commandline():
                         else:
                             # a piece
                             x = int(symbols[3])
-                            y = (9 - int(symbols[2])) % 10
+                            y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
                             if (check_piece_range(int(symbols[2]), int(symbols[3]))):
                                 # piece is not within the outer 3 columns and rows
                                 if board[y][x] == ' ':
@@ -248,7 +248,7 @@ def get_board_setup_from_commandline():
         elif (len(symbols) == 3):
             # a blocked field
             x = int(symbols[2])
-            y = (9 - int(symbols[1])) % 10
+            y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
             if (check_index_on_board(int(symbols[1]), int(symbols[2]))):
                 # blocked field is on the board
                 if (symbols[0] == "x"):
@@ -270,6 +270,13 @@ def get_board_setup_from_commandline():
     return board
 
 
+def do_game_loop(board):
+    # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
+    # TODO print messages for wins and losses , check if the game is won or lost, move pieces, figure out 3d data structure?
+    while True:
+        line = stdio.readLine().strip()
+
+
 def check_piece_upright(row, col, board):
     try:
         upright = not (board[row][col] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'] and (row != 9 and (
@@ -285,7 +292,9 @@ def main():
 
     # read input from the commandline and update the board accordingly
     board = get_board_setup_from_commandline()
-    # print_board(board)
+    print_board(board)
+
+    # do_game_loop(board)
 
 
 if __name__ == "__main__":
