@@ -1,6 +1,7 @@
 import sys
 import stdio
 
+# global vars that are updated in the check input validation function
 NUM_ROWS = 10
 NUM_COLUMNS = 10
 GUI_MODE = False
@@ -41,27 +42,25 @@ def print_board(board):
         return '   +--' + '--'.join(['+' for _ in range(num_cols)])
 
     def get_piece_display(row, col):
-        # TODO: Implement the row and col displays for the bootom left corner of peices
-        # checks what peice is on the given square and returns the appropriate characters
-        # s: represents a sink
-        # x: represents a blocked field
-        # a	1x1x1
-        # b	1x1x2
-        # c	1x1x3
-        # d	2x2x2
+        # returns the string to display for a given piece
         piece = board[row][col]
         if piece == ' ':
+            # empty field
             return '  '
         elif piece == 's':
+            # sink field
             return ' s'
         elif piece == 'x':
+            # blocked field
             return ' x'
         elif piece.islower():
+            # piece is light
             return ' ' + piece
         elif piece.isupper():
+            # peice is dark
             return ' ' + piece
         elif len(piece) == 2:
-            # number representing peice
+            # number representing bottom left most piece
             return piece
         return "  "
 
@@ -69,6 +68,7 @@ def print_board(board):
     stdio.writeln('    ' + '  '.join([str(i) for i in range(num_cols)]))
     stdio.writeln(get_row_separator())
 
+    # display the board
     for i in range(num_rows):
         out = ' ' + str(num_rows - i-1) + ' |'
         for j in range(num_cols):
@@ -78,13 +78,15 @@ def print_board(board):
 
 
 def check_sink_range(row, col):
+    # checks if the sink is within the outer 3 columns and rows
     if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
         return False
     else:
         return True
 
 
-def check_peice_range(row, col):
+def check_piece_range(row, col):
+    # checks if the piece is not within the outer 3 columns and rows
     if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
         return True
     else:
@@ -92,23 +94,24 @@ def check_peice_range(row, col):
 
 
 def check_index_on_board(row, col):
+    # checks if a peice is legitimately on the board
     if (row not in range(0, NUM_ROWS) or col not in range(0, NUM_COLUMNS)):
         return False
     return True
 
 
-def check_peice_type(peice_object, peice_type):
-    if (peice_object == 's'):
-        if (peice_type not in ['1', '2']):
+def check_piece_type(piece_object, piece_type):
+    # checks whether the peice type is valid according to the program spesifications
+    if (piece_object == 's'):
+        if (piece_type not in ['1', '2']):
             return False
-    elif (peice_object in ['l', 'x', 'd']):
-        if (peice_type not in ['a', 'b', 'c', 'd']):
+    elif (piece_object in ['l', 'x', 'd']):
+        if (piece_type not in ['a', 'b', 'c', 'd']):
             return False
     return True
 
 
 def get_board_setup_from_commandline():
-
     # init board 2d array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
 
@@ -119,28 +122,34 @@ def get_board_setup_from_commandline():
             break
         symbols = line.split(" ")
         if (len(symbols) == 4):
-            # either a peice or a sink
+            # either a piece or a sink
             if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
+                # piece or sink is on the board
+                # symbols[0] is the object type and symbols[1] is the piece type
                 if (symbols[0] in ['l', 'd', 's']):
-                    if (check_peice_type(symbols[0], symbols[1])):
+                    # valid object type
+                    if (check_piece_type(symbols[0], symbols[1])):
+                        # peice type aligns to object type
                         if (symbols[0] == "s"):
                             # a sink
                             if (check_sink_range(int(symbols[2]), int(symbols[3]))):
+                                # sink is within the outer 3 columns and rows
                                 x = int(symbols[3])
-                                y = (9 - int(symbols[2])) % 9
+                                y = (9 - int(symbols[2])) % 10
                                 if (board[y][x] == ' '):
+                                    # empty field
                                     board[y][x] = "s"
                                 else:
                                     stdio.writeln(
                                         "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
                                     exit()
-
                                 if (symbols[1] == "2"):
                                     # a 2x2 sink
                                     if (check_sink_range(x+1, y)):
                                         if (check_sink_range(x, y-1)):
                                             if (check_sink_range(x+1, y-1)):
                                                 if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
+                                                    # all fields are empty
                                                     board[y][x+1] = "s"
                                                     board[y-1][x] = "s"
                                                     board[y-1][x+1] = "s"
@@ -165,69 +174,42 @@ def get_board_setup_from_commandline():
                                     "ERROR: Sink in the wrong position")
                                 exit()
                         else:
-                            # a peice
+                            # a piece
                             x = int(symbols[3])
-                            y = (9 - int(symbols[2])) % 9
-                            if (check_peice_range(int(symbols[2]), int(symbols[3]))):
-                                if board[y][x] == ' ':  # empty field
+                            y = (9 - int(symbols[2])) % 10
+                            if (check_piece_range(int(symbols[2]), int(symbols[3]))):
+                                # piece is not within the outer 3 columns and rows
+                                if board[y][x] == ' ':
+                                    # empty field
+                                    # symbol var that represents the piece type and if it is dark or light
+                                    symbol = ''
                                     if (symbols[0] == 'l'):
-                                        board[y][x] = symbols[1].lower()
-                                        if (symbols[1] == "d"):
-                                            if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
-                                                if (check_peice_range(x+1, y)):
-                                                    if (check_peice_range(x, y-1)):
-                                                        if (check_peice_range(x+1, y-1)):
-                                                            index = (
-                                                                int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
-                                                            # pad the index on the right by a space if it is one digit
-                                                            if (index < 10):
-                                                                index = " " + \
-                                                                    str(index)
-                                                            board[y][x +
-                                                                     1] = str(index)
-                                                            board[y -
-                                                                  1][x] = str(index)
-                                                            board[y-1][x +
-                                                                       1] = str(index)
-                                                        else:
-                                                            stdio.writeln(
-                                                                "ERROR: Piece in the wrong position")
-                                                            exit()
-                                                    else:
-                                                        stdio.writeln(
-                                                            "ERROR: Piece in the wrong position")
-                                                        exit()
-                                                else:
-                                                    stdio.writeln(
-                                                        "ERROR: Piece in the wrong position")
-                                                    exit()
-                                            else:
-                                                stdio.writeln(
-                                                    "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                                exit()
+                                        symbol = symbols[1].lower()
                                     elif (symbols[0] == 'd'):
-                                        board[y][x] = symbols[1].upper()
-                                        if symbols[1] == "d":
-                                            if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
-                                                if (check_peice_range(x+1, y)):
-                                                    if (check_peice_range(x, y-1)):
-                                                        if (check_peice_range(x+1, y-1)):
-                                                            index = (
-                                                                int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
-                                                            # pad the index on the right by a space if it is one digit
-                                                            if (index < 10):
-                                                                index = " " + \
-                                                                    str(index)
-                                                            board[y][x +
-                                                                     1] = str(index)
-                                                            board[y -
-                                                                  1][x] = str(index)
-                                                            board[y-1][x +
-                                                                       1] = str(index)
-                                                        else:
-                                                            stdio.writeln(
-                                                                "ERROR: Piece in the wrong position")
-                                                            exit()
+                                        symbol = symbols[1].upper()
+                                    board[y][x] = symbol
+                                    if (symbols[1] == "d"):
+                                        # 2x2 piece
+                                        if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
+                                            # all fields empty
+                                            if (check_piece_range(x+1, y)):
+                                                if (check_piece_range(x, y-1)):
+                                                    if (check_piece_range(x+1, y-1)):
+                                                        # all fields are within the inner board
+
+                                                        # index representing the bottom left most field of that piece
+                                                        index = (
+                                                            int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                        # pad the index on the right by a space if it is one digit
+                                                        if (index < 10):
+                                                            index = " " + \
+                                                                str(index)
+                                                        board[y][x +
+                                                                 1] = str(index)
+                                                        board[y -
+                                                              1][x] = str(index)
+                                                        board[y-1][x +
+                                                                   1] = str(index)
                                                     else:
                                                         stdio.writeln(
                                                             "ERROR: Piece in the wrong position")
@@ -238,8 +220,12 @@ def get_board_setup_from_commandline():
                                                     exit()
                                             else:
                                                 stdio.writeln(
-                                                    "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                                    "ERROR: Piece in the wrong position")
                                                 exit()
+                                        else:
+                                            stdio.writeln(
+                                                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                            exit()
                                 else:
                                     stdio.writeln(
                                         "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
@@ -261,10 +247,26 @@ def get_board_setup_from_commandline():
                 exit()
         elif (len(symbols) == 3):
             # a blocked field
-            board[symbols[1]][symbols[2]] = 'x'
+            x = int(symbols[2])
+            y = (9 - int(symbols[1])) % 10
+            if (check_index_on_board(int(symbols[1]), int(symbols[2]))):
+                # blocked field is on the board
+                if (symbols[0] == "x"):
+                    # just making sure it is a blocked field
+                    if (board[y][x] == " "):
+                        # empty field
+                        board[y][x] = 'x'
+                    else:
+                        stdio.writeln(
+                            "ERROR: Field " + symbols[1] + " " + symbols[2] + " not free")
+                        exit()
+                else:
+                    stdio.writeln("ERROR: Invalid object type " + symbols[0])
+                    exit()
         else:
             stdio.writeln("ERROR: Invalid input")
             exit()
+        print_board(board)
     return board
 
 
@@ -283,10 +285,7 @@ def main():
 
     # read input from the commandline and update the board accordingly
     board = get_board_setup_from_commandline()
-    print_board(board)
-    # main game loop
-    # while not GAME_OVER:
-    #     pass
+    # print_board(board)
 
 
 if __name__ == "__main__":
