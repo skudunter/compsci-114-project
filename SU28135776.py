@@ -111,6 +111,19 @@ def check_piece_type(piece_object, piece_type):
     return True
 
 
+def check_sink_adjacent(row, col, board):
+    # checks if the sink is adjacent to a sink
+    try:
+        if (col > 0 and board[row][col-1] == 's') or \
+           (col < len(board[0]) - 1 and board[row][col+1] == 's') or \
+           (row > 0 and board[row-1][col] == 's') or \
+           (row < len(board) - 1 and board[row+1][col] == 's'):
+            return True
+    except IndexError:
+        pass
+    return False
+
+
 def get_board_setup_from_commandline():
     # init board 2d array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
@@ -138,24 +151,49 @@ def get_board_setup_from_commandline():
                                 y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
                                 if (board[y][x] == ' '):
                                     # empty field
-                                    board[y][x] = "s"
-                                else:
-                                    stdio.writeln(
-                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                    exit()
-                                if (symbols[1] == "2"):
-                                    # a 2x2 sink
-                                    if (check_sink_range(x+1, y)):
-                                        if (check_sink_range(x, y-1)):
-                                            if (check_sink_range(x+1, y-1)):
-                                                if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
-                                                    # all fields are empty
-                                                    board[y][x+1] = "s"
-                                                    board[y-1][x] = "s"
-                                                    board[y-1][x+1] = "s"
+                                    if (symbols[1] == "2"):
+                                        # a 2x2 sink
+                                        if (check_sink_range(x+1, y)):
+                                            if (check_sink_range(x, y-1)):
+                                                if (check_sink_range(x+1, y-1)):
+                                                    # all fields are within the outer 3 columns or rows
+                                                    if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
+                                                        # all fields are empty
+                                                        if (not check_sink_adjacent(y, x, board)):
+                                                            if (not check_sink_adjacent(y, x+1, board)):
+                                                                if (not check_sink_adjacent(y-1, x, board)):
+                                                                    if (not check_sink_adjacent(y-1, x+1, board)):
+                                                                        # no sinks adjaceant to this sink
+                                                                        board[y][x] = "s"
+                                                                        board[y][x +
+                                                                                 1] = "s"
+                                                                        board[y -
+                                                                              1][x] = "s"
+                                                                        board[y-1][x +
+                                                                                   1] = "s"
+                                                                    else:
+                                                                        stdio.writeln(
+                                                                            "ERROR: Sink cannot be next to another sink")
+                                                                        exit()
+                                                                else:
+                                                                    stdio.writeln(
+                                                                        "ERROR: Sink cannot be next to another sink")
+                                                                    exit()
+                                                            else:
+                                                                stdio.writeln(
+                                                                    "ERROR: Sink cannot be next to another sink")
+                                                                exit()
+                                                        else:
+                                                            stdio.writeln(
+                                                                "ERROR: Sink cannot be next to another sink")
+                                                            exit()
+                                                    else:
+                                                        stdio.writeln(
+                                                            "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                                        exit()
                                                 else:
                                                     stdio.writeln(
-                                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                                        "ERROR: Sink in the wrong position")
                                                     exit()
                                             else:
                                                 stdio.writeln(
@@ -166,9 +204,18 @@ def get_board_setup_from_commandline():
                                                 "ERROR: Sink in the wrong position")
                                             exit()
                                     else:
-                                        stdio.writeln(
-                                            "ERROR: Sink in the wrong position")
-                                        exit()
+                                        # a 1x1 sink
+                                        if (not check_sink_adjacent(y, x, board)):
+                                            # no sinks adjaceant to this sink
+                                            board[y][x] = "s"
+                                        else:
+                                            stdio.writeln(
+                                                "ERROR: Sink cannot be next to another sink")
+                                            exit()
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                    exit()
                             else:
                                 stdio.writeln(
                                     "ERROR: Sink in the wrong position")
@@ -266,15 +313,20 @@ def get_board_setup_from_commandline():
         else:
             stdio.writeln("ERROR: Invalid input")
             exit()
-        print_board(board)
     return board
 
 
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
     # TODO print messages for wins and losses , check if the game is won or lost, move pieces, figure out 3d data structure?
+    turn = True
+    movesMade = 0
     while True:
+        if (stdio.hasNextLine()):
+            stdio.writeln("ERROR: Partial Game")
+            exit()
         line = stdio.readLine().strip()
+        # move pieces
 
 
 def check_piece_upright(row, col, board):
@@ -294,7 +346,7 @@ def main():
     board = get_board_setup_from_commandline()
     print_board(board)
 
-    # do_game_loop(board)
+    do_game_loop(board)
 
 
 if __name__ == "__main__":
