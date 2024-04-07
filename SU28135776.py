@@ -316,92 +316,147 @@ def get_board_setup_from_commandline():
     return board
 
 
+def get_player_from_board(symbols, board) -> str:
+    # is run once to determine the player from the first move
+    if (len(symbols) == 3):
+        x = int(symbols[1])
+        y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
+
+        if (check_index_on_board(int(symbols[0]), int(symbols[1]))):
+            if (board[y][x] in ["a", "b", "c", "d"]):
+                if (board[y][x].islower()):
+                    return "light"
+                else:
+                    return "dark"
+        else:
+            stdio.writeln("ERROR: Field " +
+                          symbols[0] + " " + symbols[1] + " not on board")
+            exit()
+    else:
+        stdio.writeln("Error: Illegal argument")
+        exit()
+
+
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
     # TODO print messages for wins and losses , check if the game is won or lost, move pieces, figure out 3d data structure?
-    turn = True
-    movesMade = 0
+    player = ''
+    moves_made = 0
+    white_sink_moves = 0
+    dark_sink_moves = 0
+    white_total = 0
+    dark_total = 0
     while True:
-        # if (stdio.hasNextLine()):
-        #     stdio.writeln("ERROR: Partial Game")
-        #     exit()
+        # win conditions
+        if (white_total >= 4):
+            stdio.writeln("Light wins!")
+            stdio.writeln("Dark loses")
+            exit()
+        elif (dark_total >= 4):
+            stdio.writeln("Dark wins!")
+            stdio.writeln("Light loses")
+            exit()
+        # get input from stdio
         line = stdio.readLine().strip()
         symbols = line.split(" ")
-        # TODO check if the right player is making the move
-        if (len(symbols) == 3):
+
+        # do basic checks to the input and update the player at the beginning of the game
+        if (player == ''):
+            player = get_player_from_board(symbols, board)
+
+        # check if the player's turn is over
+        if (moves_made < 2):
             # move pieces
-            x = int(symbols[1])
-            y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
+            if (len(symbols) == 3):
+                # valid input
+                if (check_index_on_board(int(symbols[0]), int(symbols[1]))):
+                    # piece or sink is on the board
+                    x = int(symbols[1])
+                    y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
+                    if ((player == "light" and board[y][x] in ['a', 'b', 'c', 'd']) or (player == "dark" and board[y][x] in ['A', 'B', 'C', 'D'])):
+                        # piece is corresponding to the correct player
+                        direction = symbols[2]
+                        if (direction in ['u', 'd', 'l', 'r']):
+                            # valid direction
+                            if (direction == 'u'):
+                                # move up
+                                if (y > 0):
+                                    if (board[y-1][x] == ' '):
+                                        board[y-1][x] = board[y][x]
+                                        board[y][x] = ' '
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                                        exit()
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Cannot move beyond the board")
+                                    exit()
 
-            if (check_index_on_board(int(symbols[0]), int(symbols[1]))):
-                # piece is on the board
-                if (board[y][x] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D']):
-                    # piece is a piece
-                    direction = symbols[2]
-                    if (direction in ['u', 'd', 'l', 'r']):
-                        # valid direction
-                        if (direction == 'u'):
-                            # move up
-                            if (y > 0):
-                                if (board[y-1][x] == ' '):
-                                    board[y-1][x] = board[y][x]
-                                    board[y][x] = ' '
+                            elif (direction == 'd'):
+                                # move down
+                                if (y < NUM_ROWS-1):
+                                    if (board[y+1][x] == ' '):
+                                        board[y+1][x] = board[y][x]
+                                        board[y][x] = ' '
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                                        exit()
                                 else:
-                                    stdio.writeln("ERROR: Invalid move")
+                                    stdio.writeln(
+                                        "ERROR: Cannot move beyond the board")
                                     exit()
-                            else:
-                                stdio.writeln("ERROR: Invalid move")
-                                exit()
-
-                        elif (direction == 'd'):
-                            # move down
-                            if (y < NUM_ROWS-1):
-                                if (board[y+1][x] == ' '):
-                                    board[y+1][x] = board[y][x]
-                                    board[y][x] = ' '
+                            elif (direction == 'l'):
+                                # move left
+                                if (x > 0):
+                                    if (board[y][x-1] == ' '):
+                                        board[y][x-1] = board[y][x]
+                                        board[y][x] = ' '
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                                        exit()
                                 else:
-                                    stdio.writeln("ERROR: Invalid move")
+                                    stdio.writeln(
+                                        "ERROR: Cannot move beyond the board")
                                     exit()
-                            else:
-                                stdio.writeln("ERROR: Invalid move")
-                                exit()
-                        elif (direction == 'l'):
-                            # move left
-                            if (x > 0):
-                                if (board[y][x-1] == ' '):
-                                    board[y][x-1] = board[y][x]
-                                    board[y][x] = ' '
+                            elif (direction == 'r'):
+                                # move right
+                                if (x < NUM_COLUMNS-1):
+                                    if (board[y][x+1] == ' '):
+                                        board[y][x+1] = board[y][x]
+                                        board[y][x] = ' '
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                                        exit()
                                 else:
-                                    stdio.writeln("ERROR: Invalid move")
+                                    stdio.writeln(
+                                        "ERROR: Cannot move beyond the board")
                                     exit()
-                            else:
-                                stdio.writeln("ERROR: Invalid move")
-                                exit()
-                        elif (direction == 'r'):
-                            # move right
-                            if (x < NUM_COLUMNS-1):
-                                if (board[y][x+1] == ' '):
-                                    board[y][x+1] = board[y][x]
-                                    board[y][x] = ' '
-                                else:
-                                    stdio.writeln("ERROR: Invalid move")
-                                    exit()
-                            else:
-                                stdio.writeln("ERROR: Invalid move")
-                                exit()
+                        else:
+                            stdio.writeln(
+                                "Error: Invalid direction " + direction)
                     else:
-                        stdio.writeln("Error: Invalid direction " + direction)
+                        stdio.writeln("ERROR: Piece does not belong to the correct player")
+                        exit()
                 else:
-                    stdio.writeln("ERROR: No peice on field " +
-                                  symbols[0] + " " + symbols[1])
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not on board")
                     exit()
             else:
-                stdio.writeln("ERROR: Field " +
-                              symbols[0] + " " + symbols[1] + " not on board")
+                stdio.writeln("Error: Illegal argument")
                 exit()
+
         else:
-            stdio.writeln("Error: Invalid input")
-            exit()
+            moves_made = 0
+            # reverse who is the player
+            if (player == 'light'):
+                player = 'dark'
+            else:
+                player = 'light'
+
         print_board(board)
 
 
