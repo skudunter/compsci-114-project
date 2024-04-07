@@ -135,7 +135,7 @@ def get_board_setup_from_commandline():
                             if (check_sink_range(int(symbols[2]), int(symbols[3]))):
                                 # sink is within the outer 3 columns and rows
                                 x = int(symbols[3])
-                                y = (9 - int(symbols[2])) % 10
+                                y = (9 - int(symbols[2])) % 10 #TODO works for 10X10 board test to see if it works for other cases aswell?
                                 if (board[y][x] == ' '):
                                     # empty field
                                     board[y][x] = "s"
