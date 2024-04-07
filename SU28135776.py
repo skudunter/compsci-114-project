@@ -322,11 +322,87 @@ def do_game_loop(board):
     turn = True
     movesMade = 0
     while True:
-        if (stdio.hasNextLine()):
-            stdio.writeln("ERROR: Partial Game")
-            exit()
+        # if (stdio.hasNextLine()):
+        #     stdio.writeln("ERROR: Partial Game")
+        #     exit()
         line = stdio.readLine().strip()
-        # move pieces
+        symbols = line.split(" ")
+        # TODO check if the right player is making the move
+        if (len(symbols) == 3):
+            # move pieces
+            x = int(symbols[1])
+            y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
+
+            if (check_index_on_board(int(symbols[0]), int(symbols[1]))):
+                # piece is on the board
+                if (board[y][x] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D']):
+                    # piece is a piece
+                    direction = symbols[2]
+                    if (direction in ['u', 'd', 'l', 'r']):
+                        # valid direction
+                        if (direction == 'u'):
+                            # move up
+                            if (y > 0):
+                                if (board[y-1][x] == ' '):
+                                    board[y-1][x] = board[y][x]
+                                    board[y][x] = ' '
+                                else:
+                                    stdio.writeln("ERROR: Invalid move")
+                                    exit()
+                            else:
+                                stdio.writeln("ERROR: Invalid move")
+                                exit()
+
+                        elif (direction == 'd'):
+                            # move down
+                            if (y < NUM_ROWS-1):
+                                if (board[y+1][x] == ' '):
+                                    board[y+1][x] = board[y][x]
+                                    board[y][x] = ' '
+                                else:
+                                    stdio.writeln("ERROR: Invalid move")
+                                    exit()
+                            else:
+                                stdio.writeln("ERROR: Invalid move")
+                                exit()
+                        elif (direction == 'l'):
+                            # move left
+                            if (x > 0):
+                                if (board[y][x-1] == ' '):
+                                    board[y][x-1] = board[y][x]
+                                    board[y][x] = ' '
+                                else:
+                                    stdio.writeln("ERROR: Invalid move")
+                                    exit()
+                            else:
+                                stdio.writeln("ERROR: Invalid move")
+                                exit()
+                        elif (direction == 'r'):
+                            # move right
+                            if (x < NUM_COLUMNS-1):
+                                if (board[y][x+1] == ' '):
+                                    board[y][x+1] = board[y][x]
+                                    board[y][x] = ' '
+                                else:
+                                    stdio.writeln("ERROR: Invalid move")
+                                    exit()
+                            else:
+                                stdio.writeln("ERROR: Invalid move")
+                                exit()
+                    else:
+                        stdio.writeln("Error: Invalid direction " + direction)
+                else:
+                    stdio.writeln("ERROR: No peice on field " +
+                                  symbols[0] + " " + symbols[1])
+                    exit()
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[0] + " " + symbols[1] + " not on board")
+                exit()
+        else:
+            stdio.writeln("Error: Invalid input")
+            exit()
+        print_board(board)
 
 
 def check_piece_upright(row, col, board):
