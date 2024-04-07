@@ -248,7 +248,7 @@ def get_board_setup_from_commandline():
         elif (len(symbols) == 3):
             # a blocked field
             x = int(symbols[2])
-            y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
+            y = (9 - int(symbols[1])) % 10
             if (check_index_on_board(int(symbols[1]), int(symbols[2]))):
                 # blocked field is on the board
                 if (symbols[0] == "x"):
