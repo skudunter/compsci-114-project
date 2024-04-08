@@ -414,6 +414,14 @@ def move_a_piece(symbols, direction, board) -> int:
             exit()
         return 0
 
+def move_b_piece(symbols, direction, board) -> int:
+    pass
+
+def move_c_piece(symbols, direction, board) -> int:
+    pass
+
+def move_d_piece(symbols, direction, board) -> int:
+    pass
 
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
@@ -500,12 +508,35 @@ def do_game_loop(board):
                             elif (piece_being_moved == 'b') or (piece_being_moved == 'B'):
                                 # 1x1x2 piece
                                 moves_made += 1
+                                if player == "light":
+                                    white_total += move_b_piece(
+                                        symbols, direction, board)
+                                else:
+                                    dark_total += move_b_piece(
+                                        symbols, direction, board)
                             elif (piece_being_moved == 'c') or (piece_being_moved == 'C'):
                                 # 1x1X3 piece
                                 moves_made += 1
+                                if player == "light":
+                                    white_total += move_c_piece(
+                                        symbols, direction, board)
+                                else:
+                                    dark_total += move_c_piece(
+                                        symbols, direction, board)
                             elif (piece_being_moved == 'd') or (piece_being_moved == 'D'):
                                 # 2x2x2 piece
-                                moves_made += 2
+                                if moves_made == 0:
+                                    moves_made += 2
+                                    if player == "light":
+                                        white_total += move_d_piece(
+                                            symbols, direction, board)
+                                    else:
+                                        dark_total += move_d_piece(
+                                            symbols, direction, board)
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Cannot move 2x2X2 piece on the second move")
+                                    exit()        
 
                         else:
                             stdio.writeln(
