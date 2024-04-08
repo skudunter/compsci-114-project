@@ -336,12 +336,91 @@ def get_player_from_board(symbols, board) -> str:
         exit()
 
 
+def move_a_piece(symbols, direction, board) -> int:
+    # moves 'a' piece
+    x = int(symbols[1])
+    y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
+
+    if (direction == 'u'):
+        # move up
+        if (y > 0):
+            if (board[y-1][x] == 's'):
+                board[y][x] = ' '
+                return 1
+            elif (board[y-1][x] == ' '):
+                board[y-1][x] = board[y][x]
+                board[y][x] = ' '
+            else:
+                stdio.writeln(
+                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln(
+                "ERROR: Cannot move beyond the board")
+            exit()
+        return 0
+    elif (direction == 'd'):
+        # move down
+        if (y < NUM_ROWS-1):
+            if (board[y+1][x] == 's'):
+                board[y][x] = ' '
+                return 1
+            elif (board[y+1][x] == ' '):
+                board[y+1][x] = board[y][x]
+                board[y][x] = ' '
+            else:
+                stdio.writeln(
+                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln(
+                "ERROR: Cannot move beyond the board")
+            exit()
+        return 0
+    elif (direction == 'l'):
+        # move left
+        if (x > 0):
+            if (board[y][x-1] == 's'):
+                board[y][x] = ' '
+                return 1
+            elif (board[y][x-1] == ' '):
+                board[y][x-1] = board[y][x]
+                board[y][x] = ' '
+            else:
+                stdio.writeln(
+                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln(
+                "ERROR: Cannot move beyond the board")
+            exit()
+        return 0
+    elif (direction == 'r'):
+        # move right
+        if (board[y][x+1] == 's'):
+            board[y][x] = ' '
+            return 1
+        elif (x < NUM_COLUMNS-1):
+            if (board[y][x+1] == ' '):
+                board[y][x+1] = board[y][x]
+                board[y][x] = ' '
+            else:
+                stdio.writeln(
+                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln(
+                "ERROR: Cannot move beyond the board")
+            exit()
+        return 0
+
+
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
     # TODO print messages for wins and losses , check if the game is won or lost, move pieces, figure out 3d data structure?
     player = ''
     moves_made = 0
-    white_sink_moves = 2
+    light_sink_moves = 2
     dark_sink_moves = 2
     black_freezes = 0
     white_freezes = 0
@@ -373,7 +452,7 @@ def do_game_loop(board):
                 player = 'dark'
             else:
                 player = 'light'
-                
+
         # move pieces
         if (len(symbols) == 3):
             # valid input
@@ -390,105 +469,44 @@ def do_game_loop(board):
                             # valid direction, move can be made
                             piece_being_moved = board[y][x]
                             if (piece_being_moved == "s"):
-                                moves_made += 2
-                                # sink is being moved
-                                pass
+                                # check if the player has sink moves left
+                                if (player == "light"):
+                                    if (light_sink_moves > 0):
+                                        light_sink_moves -= 1
+                                        moves_made += 1
+                                        # sink is being moved
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: No sink moves left")
+                                        exit()
+                                else:
+                                    if (dark_sink_moves > 0):
+                                        dark_sink_moves -= 1
+                                        moves_made += 1
+                                        # sink is being moved
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: No sink moves left")
+                                        exit()
                             elif (piece_being_moved == 'a') or (piece_being_moved == 'A'):
                                 moves_made += 1
                                 # 1x1x1 piece
-                                if (direction == 'u'):
-                                    # move up
-                                    if (y > 0):
-                                        if (board[y-1][x] == 's'):
-                                            if (player == 'light'):
-                                                white_total += 1
-                                            else:
-                                                dark_total += 1
-                                            board[y][x] = ' '
-                                        elif (board[y-1][x] == ' '):
-                                            board[y-1][x] = board[y][x]
-                                            board[y][x] = ' '
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                                            exit()
-                                    else:
-                                        stdio.writeln(
-                                            "ERROR: Cannot move beyond the board")
-                                        exit()
-                                elif (direction == 'd'):
-                                    # move down
-                                    if (y < NUM_ROWS-1):
-                                        if (board[y+1][x] == 's'):
-                                            if (player == 'light'):
-                                                white_total += 1
-                                            else:
-                                                dark_total += 1
-                                            board[y][x] = ' '
-                                        elif (board[y+1][x] == ' '):
-                                            board[y+1][x] = board[y][x]
-                                            board[y][x] = ' '
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                                            exit()
-                                    else:
-                                        stdio.writeln(
-                                            "ERROR: Cannot move beyond the board")
-                                        exit()
-                                elif (direction == 'l'):
-                                    # move left
-                                    if (x > 0):
-                                        if (board[y][x-1] == 's'):
-                                            if (player == 'light'):
-                                                white_total += 1
-                                            else:
-                                                dark_total += 1
-                                            board[y][x] = ' '
-                                        elif (board[y][x-1] == ' '):
-                                            board[y][x-1] = board[y][x]
-                                            board[y][x] = ' '
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                                            exit()
-                                    else:
-                                        stdio.writeln(
-                                            "ERROR: Cannot move beyond the board")
-                                        exit()
-                                elif (direction == 'r'):
-                                    # move right
-                                    if (board[y][x+1] == 's'):
-                                        if (player == 'light'):
-                                            white_total += 1
-                                        else:
-                                            dark_total += 1
-                                        board[y][x] = ' '
-                                    elif (x < NUM_COLUMNS-1):
-                                        if (board[y][x+1] == ' '):
-                                            board[y][x+1] = board[y][x]
-                                            board[y][x] = ' '
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                                            exit()
-                                    else:
-                                        stdio.writeln(
-                                            "ERROR: Cannot move beyond the board")
-                                        exit()
-                                elif (piece_being_moved == 'b') or (piece_being_moved == 'B'):
-                                    # 1x1x2 piece
-                                    moves_made += 1
-                                elif (piece_being_moved == 'c') or (piece_being_moved == 'C'):
-                                    # 1x1X3 piece
-                                    moves_made += 1
-                                elif (piece_being_moved == 'd') or (piece_being_moved == 'D'):
-                                    # 2x2x2 piece
-                                    moves_made += 2
-                            else:
-                                stdio.writeln("ERROR: Field " +
-                                                symbols[0] + " " + symbols[1] + " not on board")
-                                exit()
+                                if player == "light":
+                                    white_total += move_a_piece(
+                                        symbols, direction, board)
+                                else:
+                                    dark_total += move_a_piece(
+                                        symbols, direction, board)
+                            elif (piece_being_moved == 'b') or (piece_being_moved == 'B'):
+                                # 1x1x2 piece
+                                moves_made += 1
+                            elif (piece_being_moved == 'c') or (piece_being_moved == 'C'):
+                                # 1x1X3 piece
+                                moves_made += 1
+                            elif (piece_being_moved == 'd') or (piece_being_moved == 'D'):
+                                # 2x2x2 piece
+                                moves_made += 2
+
                         else:
                             stdio.writeln(
                                 "Error: Invalid direction " + direction)
@@ -498,11 +516,11 @@ def do_game_loop(board):
                         exit()
                 else:
                     stdio.writeln("ERROR: No piece on field " +
-                                    symbols[0] + " " + symbols[1])
+                                  symbols[0] + " " + symbols[1])
                     exit()
             else:
                 stdio.writeln("ERROR: Field " +
-                                symbols[0] + " " + symbols[1] + " not on board")
+                              symbols[0] + " " + symbols[1] + " not on board")
                 exit()
         else:
             stdio.writeln("Error: Illegal argument")
