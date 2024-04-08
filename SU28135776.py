@@ -1199,7 +1199,6 @@ def move_d_piece(symbols, direction, board) -> int:
 
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
-    # TODO print messages for wins and losses , check if the game is won or lost, move pieces, figure out 3d data structure?
     player = ''
     moves_made = 0
     light_sink_moves = 2
@@ -1208,6 +1207,7 @@ def do_game_loop(board):
     white_freezes = 0
     white_total = 0
     dark_total = 0
+    initial_board_state = board
     while True:
         # win conditions
         if (white_total >= 4):
@@ -1227,7 +1227,8 @@ def do_game_loop(board):
             player = get_player_from_board(symbols, board)
 
         # check if the player's turn is over
-        if (moves_made >= 20):
+        if (moves_made >= 2):
+            initial_board_state = board
             moves_made = 0
             # reverse who is the player
             if (player == 'light'):
@@ -1330,18 +1331,10 @@ def do_game_loop(board):
         else:
             stdio.writeln("Error: Illegal argument")
             exit()
-
+        if(initial_board_state == board and moves_made >= 2):
+            stdio.writeln("ERROR: Piece cannot be returned to the starting position")
+            exit()
         print_board(board)
-
-
-def check_piece_upright(row, col, board):
-    try:
-        upright = not (board[row][col] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'] and (row != 9 and (
-            board[row+1][col] == str((row * len(board) + col)) or board[row][col+1] == str((row * len(board) + col)))))
-    except:
-        upright = False
-    stdio.writeln(upright)
-
 
 def main():
     # make sure the input fits the criteria and updates the global vars,NUM_ROWS,NUM_COLUMS,GUI_MODE
