@@ -729,8 +729,337 @@ def move_b_piece(symbols, direction, board) -> int:
 
 
 def move_c_piece(symbols, direction, board) -> int:
-    pass
+    #1x1x3
+    x = int(symbols[1])
+    y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
 
+    # make index to check against
+    index = str(((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1]))
+    if (int(index.strip()) < 10):
+        index = " " + \
+            index
+
+    def get_orientation(row, col, board):
+        # returns the orientation of the piece
+        # orientation can be vertical,horizontal-x or horizontal-y
+        try:
+            if board[row][col + 1] == str(index):
+                return "horizontal-x"
+            if board[row-1][col] == str(index):
+                return "horizontal-y"
+        except IndexError:
+            pass
+        return "vertical"  # default to vertical
+
+    orientation = get_orientation(y, x, board)
+
+    # actually do the movement code
+    if direction == 'u':
+        # move up
+        if (orientation == "vertical"):
+            if (y > 2):
+                if (board[y-1][x] == " " and board[y-2][x] == " " and board[y-3][x] == " "):
+                    # fields are empty
+                    locale_index = str(
+                        ((int(symbols[0])+1) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y-1][x] = board[y][x]
+                    board[y-2][x] = str(locale_index)
+                    board[y-3][x] = str(locale_index)
+                    board[y][x] = " "
+                elif (board[y-1][x] == "s" and board[y-2][x] == "s" and board[y-3][x] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        if (orientation == "horizontal-x"):
+            if (y > 0):
+                if (board[y-1][x] == " " and board[y-1][x+1] == " " and board[y-1][x+2] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])+1) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y-1][x] = board[y][x]
+                    board[y-1][x+1] = str(locale_index)
+                    board[y-1][x+2] = str(locale_index)
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                elif (board[y-1][x] == "s" and board[y-1][x+1] == "s" and board[y-1][x+2] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        if (orientation == "horizontal-y"):
+            if (y > 0):
+                if (board[y-3][x] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])+3) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y-3][x] = board[y][x]
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                elif (board[y-3][x] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    elif (direction == 'd'):
+        if orientation == "vertical":
+            if (y < NUM_ROWS-3):
+                if (board[y+1][x] == " " and board[y+2][x] == " " and board[y+3][x] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])-3) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y+3][x] = board[y][x]
+                    board[y+2][x] = locale_index
+                    board[y+1][x] = locale_index
+                    board[y][x] = " "
+                elif (board[y+1][x] == "s" and board[y+2][x] == "s" and board[y+3][x] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-x"):
+            if (y < NUM_ROWS-1):
+                if (board[y+1][x] == " " and board[y+1][x+1] == " " and board[y+1][x+2] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])-1) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y+1][x] = board[y][x]
+                    board[y+1][x+1] = str(locale_index)
+                    board[y+1][x+2] = str(locale_index)
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                elif (board[y+1][x] == "s" and board[y+1][x+1] == "s" and board[y+1][x+2] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-y"):
+            if (y < NUM_ROWS-1):
+                if (board[y+1][x] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])-1) * NUM_COLUMNS) + int(symbols[1]))
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y+1][x] = board[y][x]
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                elif (board[y+1][x] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    elif (direction == 'l'):
+        # move left
+        if (orientation == "vertical"):
+            if (x > 2):
+                if (board[y][x-1] == " " and board[y][x-2] == " " and board[y][x-3] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])-3)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x-1] = locale_index
+                    board[y][x-2] = locale_index
+                    board[y][x-3] = board[y][x]
+                    board[y][x] = " "
+                elif (board[y][x-1] == "s" and board[y][x-2] == "s" and board[y][x-3] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-x"):
+            if (x > 0):
+                if (board[y][x-1] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])-1)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x-1] = board[y][x]
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                elif (board[y][x-1] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-y"):
+            if (x > 0):
+                if (board[y][x-1] == " " and board[y-1][x-1] == " " and board[y-2][x-1] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])-1)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x-1] = board[y][x]
+                    board[y-1][x-1] = locale_index
+                    board[y-2][x-1] = locale_index
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                elif (board[y][x-1] == "s" and board[y-1][x-1] == "s" and board[y-2][x-1] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    elif (direction == "r"):
+        if (orientation == "vertical"):
+            if (x < NUM_COLUMNS-3):
+                if (board[y][x+1] == " " and board[y][x+2] == " " and board[y][x+3] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])+1)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x+1] = board[y][x]
+                    board[y][x+2] = locale_index
+                    board[y][x+3] = locale_index
+                    board[y][x] = " "
+                elif (board[y][x+1] == "s" and board[y][x+2] == "s" and board[y][x+3] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-x"):
+            if (x < NUM_COLUMNS-3):
+                if (board[y][x+3] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])+3)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x+3] = board[y][x]
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                elif (board[y][x+3] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y][x+1] = " "
+                    board[y][x+2] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+        elif (orientation == "horizontal-y"):
+            if (x < NUM_COLUMNS-1):
+                if (board[y][x+1] == " " and board[y-1][x+1] == " " and board[y-2][x+1] == " "):
+                    locale_index = str(
+                        ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])+1)
+                    if (int(locale_index.strip()) < 10):
+                        locale_index = " " + \
+                            locale_index
+                    board[y][x+1] = board[y][x]
+                    board[y-1][x+1] = locale_index
+                    board[y-2][x+1] = locale_index
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                elif (board[y][x+1] == "s" and board[y-1][x+1] == "s" and board[y-2][x+1] == "s"):
+                    # piece is sinked
+                    board[y][x] = " "
+                    board[y-1][x] = " "
+                    board[y-2][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    return 0
 
 def move_d_piece(symbols, direction, board) -> int:
     # 2x2x2
