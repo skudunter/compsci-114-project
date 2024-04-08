@@ -414,14 +414,295 @@ def move_a_piece(symbols, direction, board) -> int:
             exit()
         return 0
 
+
 def move_b_piece(symbols, direction, board) -> int:
-    pass
+
+    # 1x1x2
+    x = int(symbols[1])
+    y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
+
+    # make index to check against
+    index = str(((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1]))
+    if (int(index.strip()) < 10):
+        index = " " + \
+            index
+
+    def get_orientation(row, col, board):
+        # returns the orientation of the piece
+        try:
+            if board[row][col + 1] == str(index):
+                return "horizontal"
+            if board[row][col - 1] == str(index):
+                return "horizontal"
+            if board[row-1][col] == str(index):
+                return "horizontal"
+            elif board[row + 1][col] == str(index):
+                return "vertical"
+        except IndexError:
+            pass
+        return "vertical"  # default to vertical if orientation cannot be determined
+
+    orientation = get_orientation(y, x, board)
+
+    if direction == 'u':
+        # move up
+        if orientation == "horizontal" and board[y][x] == board[y][x+1]:
+            # Check if there's enough space to rotate the piece
+            if y > 0 and board[y-1][x] == " " and board[y-1][x+1] == " ":
+                # Rotate the piece to vertical
+                board[y-1][x] = board[y][x]
+                board[y-1][x+1] = str(((y-1) * NUM_COLUMNS) + x)
+                board[y][x] = " "
+                board[y][x+1] = " "
+                return 0
+            else:
+                stdio.writeln("ERROR: Cannot rotate the piece")
+                exit()
+        # Move the piece up (both horizontal and vertical)
+        if y > 0:
+            target_y = y - 1
+            if orientation == "horizontal":
+                # Check if the target position is free
+                if board[target_y][x] == " " and board[target_y][x+1] == " ":
+                    locale_index = str(((target_y) * NUM_COLUMNS) + x)
+                    if int(index.strip()) < 10:
+                        index = " " + index
+                    board[target_y][x] = board[y][x]
+                    board[target_y][x+1] = locale_index
+                    board[y][x] = " "
+                    return 0
+            else:  # vertical
+                # Check if the target position is free
+                if board[target_y][x] == " ":
+                    locale_index = str(((target_y) * NUM_COLUMNS) + x)
+                    if int(index.strip()) < 10:
+                        index = " " + index
+                    board[target_y][x] = board[y][x]
+                    board[y][x] = " "
+                    return 0
+
+        stdio.writeln("ERROR: Cannot move the piece up")
+        exit()
+    elif direction == "d":
+        # move down
+        if orientation == "horizontal":
+            pass
+        else:
+            # vertical
+            if y < NUM_ROWS-3:
+                locale_index = str(
+                    ((int(symbols[0])-1) * NUM_COLUMNS) + int(symbols[1]))
+                if (int(index.strip()) < 10):
+                    index = " " + \
+                        index
+                if (board[y+1][x] == " " and board[y+2][x] == " "):
+                    board[y+1][x] = board[y][x]
+                    board[y+2][x] = locale_index
+                    board[y][x] = " "
+                elif (board[y+1][x] == "s" and board[y+2][x] == "s"):
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    elif direction == "l":
+        # move left
+        if orientation == "horizontal":
+            pass
+        else:
+            # horizontal
+            if x > 2:
+                locale_index = str(
+                    ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1]) - 1)
+                if (int(index.strip()) < 10):
+                    index = " " + \
+                        index
+                if (board[y][x-1] == " " and board[y][x-2] == " "):
+                    board[y][x-1] = board[y][x]
+                    board[y][x-2] = locale_index
+                    board[y][x] = " "
+                elif (board[y][x-1] == "s" and board[y][x-2] == "s"):
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    elif direction == "r":
+        # move right
+        if orientation == "horizontal":
+            pass
+        else:
+            # horizontal
+            if x < NUM_COLUMNS-3:
+                locale_index = str(
+                    ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1]) + 1)
+                if (int(index.strip()) < 10):
+                    index = " " + \
+                        index
+                if (board[y][x+1] == " " and board[y][x+2] == " "):
+                    board[y][x+1] = board[y][x]
+                    board[y][x+2] = locale_index
+                    board[y][x] = " "
+                elif (board[y][x+1] == "s" and board[y][x+2] == "s"):
+                    board[y][x] = " "
+                    return 1
+                else:
+                    stdio.writeln("ERROR: Field " +
+                                  symbols[0] + " " + symbols[1] + " not free")
+                    exit()
+            else:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
+    return 0
+
 
 def move_c_piece(symbols, direction, board) -> int:
     pass
 
+
 def move_d_piece(symbols, direction, board) -> int:
-    pass
+    # 2x2x2
+    x = int(symbols[1])
+    y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
+
+    if (direction == "u"):
+        # move up
+        if (y > 3):
+            if (board[y-2][x] == "s" and board[y-3][x] == "s" and board[y-2][x+1] == "s" and board[y-3][x+1] == "s"):
+                # piece is sinked return 2 points
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 2
+            if (board[y-2][x] == " " and board[y-3][x] == " " and board[y-2][x+1] == " " and board[y-3][x+1] == " "):
+                locale_index = str(
+                    ((int(symbols[0])+2) * NUM_COLUMNS) + int(symbols[1]))
+                if (int(locale_index.strip()) < 10):
+                    locale_index = " " + \
+                        locale_index
+
+                board[y-2][x] = board[y][x]
+                board[y-3][x] = locale_index
+                board[y-2][x+1] = locale_index
+                board[y-3][x+1] = locale_index
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 0
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln("ERROR: Cannot move beyond the board")
+            exit()
+    elif (direction == "d"):
+        # move down
+        if (y < NUM_ROWS-3):
+            if (board[y+1][x] == "s" and board[y+2][x] == "s" and board[y+1][x+1] == "s" and board[y+2][x+1] == "s"):
+                # piece is sinked return 2 points
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 2
+            if (board[y+1][x] == " " and board[y+2][x] == " " and board[y+1][x+1] == " " and board[y+2][x+1] == " "):
+                locale_index = str(
+                    ((int(symbols[0])-2) * NUM_COLUMNS) + int(symbols[1]))
+                if (int(locale_index.strip()) < 10):
+                    locale_index = " " + \
+                        locale_index
+                board[y+1][x] = locale_index
+                board[y+2][x] = board[y][x]
+                board[y+1][x+1] = locale_index
+                board[y+2][x+1] = locale_index
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 0
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln("ERROR: Cannot move beyond the board")
+            exit()
+    elif (direction == "l"):
+        # move left
+        if (x > 2):
+            if (board[y][x-1] == "s" and board[y][x-2] == "s" and board[y-1][x-1] == "s" and board[y-1][x-2] == "s"):
+                # piece is sinked return 2 points
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 2
+            if (board[y][x-1] == " " and board[y][x-2] == " " and board[y-1][x-1] == " " and board[y-1][x-2] == " "):
+                locale_index = str(
+                    ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])-2)
+                if (int(locale_index.strip()) < 10):
+                    locale_index = " " + \
+                        locale_index
+                board[y][x-1] = locale_index
+                board[y][x-2] = board[y][x]
+                board[y-1][x-1] = locale_index
+                board[y-1][x-2] = locale_index
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 0
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln("ERROR: Cannot move beyond the board")
+            exit()
+    elif (direction == "r"):
+        # move right
+        if (x < NUM_COLUMNS-4):
+            if (board[y][x+2] == "s" and board[y][x+3] == "s" and board[y-1][x+2] == "s" and board[y-1][x+3] == "s"):
+                # piece is sinked return 2 points
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 2
+            if (board[y][x+2] == " " and board[y][x+3] == " " and board[y-1][x+2] == " " and board[y-1][x+3] == " "):
+                locale_index = str(
+                    ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])+2)
+                if (int(locale_index.strip()) < 10):
+                    locale_index = " " + \
+                        locale_index
+                board[y][x+2] = board[y][x]
+                board[y][x+3] = locale_index
+                board[y-1][x+2] = locale_index
+                board[y+-1][x+3] = locale_index
+                board[y][x] = " "
+                board[y][x+1] = " "
+                board[y-1][x] = " "
+                board[y-1][x+1] = " "
+                return 0
+            else:
+                stdio.writeln("ERROR: Field " +
+                              symbols[0] + " " + symbols[1] + " not free")
+                exit()
+        else:
+            stdio.writeln("ERROR: Cannot move beyond the board")
+            exit()
+
 
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
@@ -536,7 +817,7 @@ def do_game_loop(board):
                                 else:
                                     stdio.writeln(
                                         "ERROR: Cannot move 2x2X2 piece on the second move")
-                                    exit()        
+                                    exit()
 
                         else:
                             stdio.writeln(
