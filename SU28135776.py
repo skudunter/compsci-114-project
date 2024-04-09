@@ -461,7 +461,7 @@ def move_b_piece(symbols, direction, board) -> int:
                 elif (board[y-1][x] == "s" and board[y-2][x] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -485,7 +485,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y][x+1] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -508,7 +508,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y-1][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -531,7 +531,7 @@ def move_b_piece(symbols, direction, board) -> int:
                 elif (board[y+1][x] == "s" and board[y+2][x] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -555,7 +555,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y][x+1] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -578,7 +578,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y-1][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -602,7 +602,7 @@ def move_b_piece(symbols, direction, board) -> int:
                 elif (board[y][x-1] == "s" and board[y][x-2] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -625,7 +625,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y][x+1] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -649,7 +649,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y-1][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -671,7 +671,7 @@ def move_b_piece(symbols, direction, board) -> int:
                 elif (board[y][x+1] == "s" and board[y][x+2] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -694,7 +694,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y][x+1] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -718,7 +718,7 @@ def move_b_piece(symbols, direction, board) -> int:
                     # piece is sinked
                     board[y][x] = " "
                     board[y-1][x] = " "
-                    return 1
+                    return 2
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -729,7 +729,7 @@ def move_b_piece(symbols, direction, board) -> int:
 
 
 def move_c_piece(symbols, direction, board) -> int:
-    #1x1x3
+    # 1x1x3
     x = int(symbols[1])
     y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
 
@@ -772,7 +772,7 @@ def move_c_piece(symbols, direction, board) -> int:
                 elif (board[y-1][x] == "s" and board[y-2][x] == "s" and board[y-3][x] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -799,7 +799,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y][x+1] = " "
                     board[y][x+2] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -824,7 +824,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y-1][x] = " "
                     board[y-2][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -848,7 +848,7 @@ def move_c_piece(symbols, direction, board) -> int:
                 elif (board[y+1][x] == "s" and board[y+2][x] == "s" and board[y+3][x] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -875,7 +875,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y][x+1] = " "
                     board[y][x+2] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -900,7 +900,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y-1][x] = " "
                     board[y-2][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -925,7 +925,7 @@ def move_c_piece(symbols, direction, board) -> int:
                 elif (board[y][x-1] == "s" and board[y][x-2] == "s" and board[y][x-3] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -950,7 +950,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y][x+1] = " "
                     board[y][x+2] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -977,7 +977,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y-1][x] = " "
                     board[y-2][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -1000,7 +1000,7 @@ def move_c_piece(symbols, direction, board) -> int:
                 elif (board[y][x+1] == "s" and board[y][x+2] == "s" and board[y][x+3] == "s"):
                     # piece is sinked
                     board[y][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -1025,7 +1025,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y][x+1] = " "
                     board[y][x+2] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -1052,7 +1052,7 @@ def move_c_piece(symbols, direction, board) -> int:
                     board[y][x] = " "
                     board[y-1][x] = " "
                     board[y-2][x] = " "
-                    return 1
+                    return 3
                 else:
                     stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
@@ -1060,6 +1060,7 @@ def move_c_piece(symbols, direction, board) -> int:
                 stdio.writeln("ERROR: Cannot move beyond the board")
                 exit()
     return 0
+
 
 def move_d_piece(symbols, direction, board) -> int:
     # 2x2x2
@@ -1075,7 +1076,7 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 2
+                return 4
             if (board[y-2][x] == " " and board[y-3][x] == " " and board[y-2][x+1] == " " and board[y-3][x+1] == " "):
                 locale_index = str(
                     ((int(symbols[0])+2) * NUM_COLUMNS) + int(symbols[1]))
@@ -1091,7 +1092,6 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 0
             else:
                 stdio.writeln("ERROR: Field " +
                               symbols[0] + " " + symbols[1] + " not free")
@@ -1108,7 +1108,7 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 2
+                return 4
             if (board[y+1][x] == " " and board[y+2][x] == " " and board[y+1][x+1] == " " and board[y+2][x+1] == " "):
                 locale_index = str(
                     ((int(symbols[0])-2) * NUM_COLUMNS) + int(symbols[1]))
@@ -1123,7 +1123,6 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 0
             else:
                 stdio.writeln("ERROR: Field " +
                               symbols[0] + " " + symbols[1] + " not free")
@@ -1140,7 +1139,7 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 2
+                return 4
             if (board[y][x-1] == " " and board[y][x-2] == " " and board[y-1][x-1] == " " and board[y-1][x-2] == " "):
                 locale_index = str(
                     ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])-2)
@@ -1155,7 +1154,6 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 0
             else:
                 stdio.writeln("ERROR: Field " +
                               symbols[0] + " " + symbols[1] + " not free")
@@ -1172,7 +1170,7 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 2
+                return 4
             if (board[y][x+2] == " " and board[y][x+3] == " " and board[y-1][x+2] == " " and board[y-1][x+3] == " "):
                 locale_index = str(
                     ((int(symbols[0])) * NUM_COLUMNS) + int(symbols[1])+2)
@@ -1187,7 +1185,6 @@ def move_d_piece(symbols, direction, board) -> int:
                 board[y][x+1] = " "
                 board[y-1][x] = " "
                 board[y-1][x+1] = " "
-                return 0
             else:
                 stdio.writeln("ERROR: Field " +
                               symbols[0] + " " + symbols[1] + " not free")
@@ -1195,6 +1192,7 @@ def move_d_piece(symbols, direction, board) -> int:
         else:
             stdio.writeln("ERROR: Cannot move beyond the board")
             exit()
+    return 0         
 
 
 def do_game_loop(board):
@@ -1312,7 +1310,6 @@ def do_game_loop(board):
                                     stdio.writeln(
                                         "ERROR: Cannot move 2x2X2 piece on the second move")
                                     exit()
-
                         else:
                             stdio.writeln(
                                 "Error: Invalid direction " + direction)
@@ -1331,10 +1328,8 @@ def do_game_loop(board):
         else:
             stdio.writeln("Error: Illegal argument")
             exit()
-        if(initial_board_state == board and moves_made >= 2):
-            stdio.writeln("ERROR: Piece cannot be returned to the starting position")
-            exit()
         print_board(board)
+
 
 def main():
     # make sure the input fits the criteria and updates the global vars,NUM_ROWS,NUM_COLUMS,GUI_MODE
