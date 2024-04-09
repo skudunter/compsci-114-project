@@ -1,10 +1,12 @@
 import sys
 import stdio
+import stdarray
 
 # global vars that are updated in the check input validation function
 NUM_ROWS = 10
 NUM_COLUMNS = 10
 GUI_MODE = False
+initial_board_state = []
 
 
 def check_input_validation():
@@ -316,7 +318,7 @@ def get_board_setup_from_commandline():
     return board
 
 
-def get_player_from_board(symbols, board) -> str:
+def get_player_from_board(symbols, board):
     # is run once to determine the player from the first move
     if (len(symbols) == 3):
         x = int(symbols[1])
@@ -336,7 +338,7 @@ def get_player_from_board(symbols, board) -> str:
         exit()
 
 
-def move_a_piece(symbols, direction, board) -> int:
+def move_a_piece(symbols, direction, board, isInCheckMode=False):
     # moves 'a' piece
     x = int(symbols[1])
     y = (NUM_ROWS-1 - int(symbols[0])) % NUM_ROWS
@@ -345,77 +347,98 @@ def move_a_piece(symbols, direction, board) -> int:
         # move up
         if (y > 0):
             if (board[y-1][x] == 's'):
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y][x] = ' '
                 return 1
             elif (board[y-1][x] == ' '):
-                board[y-1][x] = board[y][x]
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y-1][x] = board[y][x]
+                    board[y][x] = ' '
+                else:
+                    return 1
             else:
-                stdio.writeln(
-                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln(
+                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                    exit()
         else:
-            stdio.writeln(
-                "ERROR: Cannot move beyond the board")
-            exit()
+            if not isInCheckMode:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
         return 0
     elif (direction == 'd'):
         # move down
         if (y < NUM_ROWS-1):
-            if (board[y+1][x] == 's'):
-                board[y][x] = ' '
+            if not isInCheckMode:
+                if (board[y+1][x] == 's'):
+                    board[y][x] = ' '
                 return 1
             elif (board[y+1][x] == ' '):
-                board[y+1][x] = board[y][x]
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y+1][x] = board[y][x]
+                    board[y][x] = ' '
+                else:
+                    return 1
             else:
-                stdio.writeln(
-                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln(
+                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                    exit()
         else:
-            stdio.writeln(
-                "ERROR: Cannot move beyond the board")
-            exit()
+            if not isInCheckMode:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
         return 0
     elif (direction == 'l'):
         # move left
         if (x > 0):
             if (board[y][x-1] == 's'):
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y][x] = ' '
                 return 1
             elif (board[y][x-1] == ' '):
-                board[y][x-1] = board[y][x]
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y][x-1] = board[y][x]
+                    board[y][x] = ' '
+                else:
+                    return 1
             else:
-                stdio.writeln(
-                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln(
+                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                    exit()
         else:
-            stdio.writeln(
-                "ERROR: Cannot move beyond the board")
-            exit()
+            if not isInCheckMode:
+                stdio.writeln(
+                    "ERROR: Cannot move beyond the board")
+                exit()
         return 0
     elif (direction == 'r'):
         # move right
         if (board[y][x+1] == 's'):
-            board[y][x] = ' '
+            if not isInCheckMode:
+                board[y][x] = ' '
             return 1
         elif (x < NUM_COLUMNS-1):
             if (board[y][x+1] == ' '):
-                board[y][x+1] = board[y][x]
-                board[y][x] = ' '
+                if not isInCheckMode:
+                    board[y][x+1] = board[y][x]
+                    board[y][x] = ' '
+                else:
+                    return 1
             else:
-                stdio.writeln(
-                    "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln(
+                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                    exit()
         else:
-            stdio.writeln(
-                "ERROR: Cannot move beyond the board")
-            exit()
+            if not isInCheckMode:
+                stdio.writeln("ERROR: Cannot move beyond the board")
+                exit()
     return 0
 
 
-def move_b_piece(symbols, direction, board) -> int:
+def move_b_piece(symbols, direction, board, isInCheckMode=False):
     # 1x1x2
     x = int(symbols[1])
     y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
@@ -455,20 +478,26 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-1][x] = board[y][x]
-                    board[y-2][x] = str(locale_index)
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y-1][x] = board[y][x]
+                        board[y-2][x] = str(locale_index)
+                        board[y][x] = " "
+                    else:
+                        return 1
                 elif (board[y-1][x] == "s" and board[y-2][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         if (orientation == "horizontal-x"):
             if (y > 0):
                 if (board[y-1][x] == " " and board[y-1][x+1] == " "):
@@ -477,22 +506,28 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-1][x] = board[y][x]
-                    board[y-1][x+1] = str(locale_index)
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y-1][x] = board[y][x]
+                        board[y-1][x+1] = str(locale_index)
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                    else:
+                        return 1
                 elif (board[y-1][x] == "s" and board[y-1][x+1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         if (orientation == "horizontal-y"):
             if (y > 0):
                 if (board[y-2][x] == " "):
@@ -501,21 +536,27 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-2][x] = board[y][x]
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y-2][x] = board[y][x]
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                    else:
+                        return 1
                 elif (board[y-2][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     elif (direction == 'd'):
         if orientation == "vertical":
             if (y < NUM_ROWS-2):
@@ -525,20 +566,26 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+2][x] = board[y][x]
-                    board[y+1][x] = str(locale_index)
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y+2][x] = board[y][x]
+                        board[y+1][x] = str(locale_index)
+                        board[y][x] = " "
+                    else:
+                        return 1
                 elif (board[y+1][x] == "s" and board[y+2][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (y < NUM_ROWS-1):
                 if (board[y+1][x] == " " and board[y+1][x+1] == " "):
@@ -547,22 +594,28 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+1][x] = board[y][x]
-                    board[y+1][x+1] = str(locale_index)
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y+1][x] = board[y][x]
+                        board[y+1][x+1] = str(locale_index)
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                    else:
+                        return 1
                 elif (board[y+1][x] == "s" and board[y+1][x+1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (y < NUM_ROWS-1):
                 if (board[y+1][x] == " "):
@@ -571,21 +624,27 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+1][x] = board[y][x]
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y+1][x] = board[y][x]
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                    else:
+                        return 1
                 elif (board[y+1][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     elif (direction == 'l'):
         # move left
         if (orientation == "vertical"):
@@ -596,20 +655,24 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = locale_index
-                    board[y][x-2] = board[y][x]
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x-2] = board[y][x]
+                        board[y][x-1] = str(locale_index)
+                        board[y][x] = " "
                 elif (board[y][x-1] == "s" and board[y][x-2] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (x > 0):
                 if (board[y][x-1] == " "):
@@ -618,21 +681,27 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = board[y][x]
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y][x-1] = board[y][x]
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                    else:
+                        return 1
                 elif (board[y][x-1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (x > 0):
                 if (board[y][x-1] == " " and board[y-1][x-1] == " "):
@@ -641,21 +710,29 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = board[y][x]
-                    board[y-1][x-1] = locale_index
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:    
+                        board[y][x-1] = board[y][x]
+                        board[y-1][x-1] = locale_index
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                    else: 
+                        return 1    
                 elif (board[y][x-1] == "s" and board[y-1][x-1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
+                
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     elif (direction == "r"):
         if (orientation == "vertical"):
             if (x < NUM_COLUMNS-2):
@@ -665,20 +742,26 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+1] = board[y][x]
-                    board[y][x+2] = locale_index
-                    board[y][x] = " "
+                        if not isInCheckMode:
+                            board[y][x+1] = board[y][x]
+                            board[y][x+2] = locale_index
+                            board[y][x] = " "
+                        else:
+                            return 1    
                 elif (board[y][x+1] == "s" and board[y][x+2] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (x < NUM_COLUMNS-2):
                 if (board[y][x+2] == " "):
@@ -687,21 +770,27 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+2] = board[y][x]
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:    
+                        board[y][x+2] = board[y][x]
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                    else:
+                        return 1    
                 elif (board[y][x+2] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (x < NUM_COLUMNS-1):
                 if (board[y][x+1] == " " and board[y-1][x+1] == " "):
@@ -710,25 +799,32 @@ def move_b_piece(symbols, direction, board) -> int:
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+1] = board[y][x]
-                    board[y-1][x+1] = locale_index
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y][x+1] = board[y][x]
+                        board[y-1][x+1] = locale_index
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                    else:
+                        return 1    
                 elif (board[y][x+1] == "s" and board[y-1][x+1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
                     return 2
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     return 0
 
 
-def move_c_piece(symbols, direction, board) -> int:
+def move_c_piece(symbols, direction, board,isInCheckMode=False):
     # 1x1x3
     x = int(symbols[1])
     y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
@@ -1062,7 +1158,7 @@ def move_c_piece(symbols, direction, board) -> int:
     return 0
 
 
-def move_d_piece(symbols, direction, board) -> int:
+def move_d_piece(symbols, direction, board):
     # 2x2x2
     x = int(symbols[1])
     y = (NUM_ROWS - 1 - int(symbols[0])) % NUM_ROWS
@@ -1192,7 +1288,16 @@ def move_d_piece(symbols, direction, board) -> int:
         else:
             stdio.writeln("ERROR: Cannot move beyond the board")
             exit()
-    return 0         
+    return 0
+
+
+def return_copy_of_board(board):
+    # return a copy of the board because python passes by object reference and does werird stuff
+    new_board = [[0 for i in range(len(board[0]))] for j in range(len(board))]
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            new_board[i][j] = board[i][j]
+    return new_board
 
 
 def do_game_loop(board):
@@ -1205,7 +1310,7 @@ def do_game_loop(board):
     white_freezes = 0
     white_total = 0
     dark_total = 0
-    initial_board_state = board
+    initial_board_state = return_copy_of_board(board)
     while True:
         # win conditions
         if (white_total >= 4):
@@ -1226,9 +1331,9 @@ def do_game_loop(board):
 
         # check if the player's turn is over
         if (moves_made >= 2):
-            initial_board_state = board
+            initial_board_state = return_copy_of_board(board)
             moves_made = 0
-            # reverse who is the player
+            # reverse who is the  player                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             player
             if (player == 'light'):
                 player = 'dark'
             else:
@@ -1328,6 +1433,12 @@ def do_game_loop(board):
         else:
             stdio.writeln("Error: Illegal argument")
             exit()
+            # check if the player moves back to original position
+        if (moves_made >= 2):
+            if (initial_board_state == board):
+                stdio.writeln(
+                    "ERROR: Player cannot move back to original position")
+                exit()
         print_board(board)
 
 
