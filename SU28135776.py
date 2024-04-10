@@ -1147,9 +1147,9 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                         locale_index = " " + \
                             locale_index
                     if not isInCheckMode:
-                        board[y][x+1] = locale_index
+                        board[y][x+1] = board[y][x]
                         board[y][x+2] = locale_index
-                        board[y][x+3] = board[y][x]
+                        board[y][x+3] = locale_index
                         board[y][x] = " "    
                 elif (board[y][x+1] == "s" and board[y][x+2] == "s" and board[y][x+3] == "s"):
                     # piece is sinked
@@ -1387,6 +1387,48 @@ def move_d_piece(symbols, direction, board,isInCheckMode=False):
                 exit()
     return 0
 
+def can_player_move(board,player):
+    # check if the current player can move and return a boolean
+    #TODO implement sink moves
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if (player == "light"):
+                if (board[i][j] in ['a', 'b', 'c', 'd']):
+                    if (board[i][j] == 'a'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_a_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif(board[i][j] == 'b'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_b_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif(board[i][j] == 'c'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_c_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif(board[i][j] == 'd'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_d_piece([i, j, direction], direction, board, True) != 0):
+                                return True                
+            else:
+                if (board[i][j] in ['A', 'B', 'C', 'D']):
+                    if (board[i][j] == 'A'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_a_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif(board[i][j] == 'B'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_b_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif(board[i][j] == "C"):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_c_piece([i, j, direction], direction, board, True) != 0):
+                                return True
+                    elif (board[i][j] == 'D'):
+                        for direction in ['u', 'd', 'l', 'r']:
+                            if (move_d_piece([i, j, direction], direction, board, True) != 0):
+                                return True        
+    return False            
 
 def return_copy_of_board(board):
     # return a copy of the board because python passes by object reference and does werird stuff
@@ -1409,15 +1451,6 @@ def do_game_loop(board):
     dark_total = 0
     initial_board_state = return_copy_of_board(board)
     while True:
-        # win conditions
-        if (white_total >= 4):
-            stdio.writeln("Light wins!")
-            stdio.writeln("Dark loses")
-            exit()
-        elif (dark_total >= 4):
-            stdio.writeln("Dark wins!")
-            stdio.writeln("Light loses")
-            exit()
         # get input from stdio
         line = stdio.readLine().strip()
         symbols = line.split(" ")
@@ -1425,17 +1458,6 @@ def do_game_loop(board):
         # do basic checks to the input and update the player at the beginning of the game
         if (player == ''):
             player = get_player_from_board(symbols, board)
-
-        # check if the player's turn is over
-        if (moves_made >= 2):
-            initial_board_state = return_copy_of_board(board)
-            moves_made = 0
-            # reverse who is the  player                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             player
-            if (player == 'light'):
-                player = 'dark'
-            else:
-                player = 'light'
-
         # move pieces
         if (len(symbols) == 3):
             # valid input
@@ -1530,13 +1552,58 @@ def do_game_loop(board):
         else:
             stdio.writeln("Error: Illegal argument")
             exit()
-            # check if the player moves back to original position
+
+
+        print_board(board)
+        if moves_made == 1:
+            # check if current player can move
+            if not can_player_move(board,player):
+                if (player == 'light'):
+                    stdio.writeln("Dark wins!")
+                    stdio.writeln("Light loses")
+                    exit()
+                else:
+                    stdio.writeln("Light wins!")
+                    stdio.writeln("Dark loses")
+                    exit()
         if (moves_made >= 2):
+
+            # check if the player moves back to original position
             if (initial_board_state == board):
                 stdio.writeln(
                     "ERROR: Player cannot move back to original position")
                 exit()
-        print_board(board)
+
+            # check if the player's turn is over
+            initial_board_state = return_copy_of_board(board)
+            moves_made = 0
+
+            # reverse who is the  player                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             player
+            if (player == 'light'):
+                player = 'dark'
+            else:
+                player = 'light'
+
+            # check if the next player can move  
+            if not can_player_move(board,player):
+                if (player == 'light'):
+                    stdio.writeln("Dark wins!")
+                    stdio.writeln("Light loses")
+                    exit()
+                else:
+                    stdio.writeln("Light wins!")
+                    stdio.writeln("Dark loses")
+                    exit() 
+
+          # win conditions
+        if (white_total >= 4):
+            stdio.writeln("Light wins!")
+            stdio.writeln("Dark loses")
+            exit()
+        elif (dark_total >= 4):
+            stdio.writeln("Dark wins!")
+            stdio.writeln("Light loses")
+            exit()              
 
 
 def main():
