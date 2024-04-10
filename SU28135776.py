@@ -1,6 +1,5 @@
 import sys
 import stdio
-import stdarray
 
 # global vars that are updated in the check input validation function
 NUM_ROWS = 10
@@ -131,6 +130,8 @@ def get_board_setup_from_commandline():
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
 
     while True:
+        if not stdio.hasNextLine():
+            break
         line = stdio.readLine().strip()
         if '#' in line:
             # Exit the loop if '#' is found in the line
@@ -159,7 +160,7 @@ def get_board_setup_from_commandline():
                                             if (check_sink_range(x, y-1)):
                                                 if (check_sink_range(x+1, y-1)):
                                                     # all fields are within the outer 3 columns or rows
-                                                    if (check_index_on_board(x+1, y) and check_index_on_board(x, y-1) and check_index_on_board(x+1, y-1)):
+                                                    if (check_index_on_board(int(symbols[2])+1, int(symbols[3])) and check_index_on_board(int(symbols[2]), int(symbols[3])+1) and check_index_on_board(int(symbols[2])+1, int(symbols[3])+1)):
                                                         if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
                                                             # all fields are empty
                                                             if (not check_sink_adjacent(y, x, board)):
@@ -375,8 +376,8 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
     elif (direction == 'd'):
         # move down
         if (y < NUM_ROWS-1):
-            if not isInCheckMode:
-                if (board[y+1][x] == 's'):
+            if (board[y+1][x] == 's'):
+                if not isInCheckMode:
                     board[y][x] = ' '
                 return 1
             elif (board[y+1][x] == ' '):
@@ -1460,8 +1461,12 @@ def do_game_loop(board):
     dark_total = 0
     initial_board_state = return_copy_of_board(board)
     while True:
+
+        if not stdio.hasNextLine():
+            break
         # get input from stdio
         line = stdio.readLine().strip()
+
         symbols = line.split(" ")
 
         # do basic checks to the input and update the player at the beginning of the game
