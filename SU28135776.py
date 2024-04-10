@@ -366,7 +366,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                        "ERROR: Field " + str(int(symbols[0]) + 1 )+ " " + symbols[1] + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -389,7 +389,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                        "ERROR: Field " + str(int(symbols[0]) - 1 ) + " " + symbols[1] + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -412,7 +412,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[1]) - 1 )+ " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -436,7 +436,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + symbols[1] + " not free")
+                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[0]) + 1 )+ " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -1451,7 +1451,7 @@ def return_copy_of_board(board):
 
 def do_game_loop(board):
     # main function that does all the logic for the actual game loop, checking for wins and losses or partial games
-    player = ''
+    player = 'light'
     moves_made = 0
     light_sink_moves = 2
     dark_sink_moves = 2
@@ -1459,9 +1459,18 @@ def do_game_loop(board):
     white_freezes = 0
     white_total = 0
     dark_total = 0
+    total_moves = 0
     initial_board_state = return_copy_of_board(board)
     while True:
+        num_pieces = 0
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if (board[i][j] in ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D']):
+                    num_pieces += 1  # count the number of pieces on the board
 
+        if (num_pieces == 0 and total_moves == 0):
+            stdio.writeln("Light loses")
+            exit()
         if not stdio.hasNextLine():
             break
         # get input from stdio
@@ -1469,9 +1478,8 @@ def do_game_loop(board):
 
         symbols = line.split(" ")
 
-        # do basic checks to the input and update the player at the beginning of the game
-        if (player == ''):
-            player = get_player_from_board(symbols, board)
+        total_moves += 1
+
         # move pieces
         if (len(symbols) == 3):
             # valid input
@@ -1546,11 +1554,11 @@ def do_game_loop(board):
                                             symbols, direction, board)
                                 else:
                                     stdio.writeln(
-                                        "ERROR: Cannot move 2x2X2 piece on the second move")
+                                        "ERROR: Cannot move a 2x2x2 piece on the second move")
                                     exit()
                         else:
                             stdio.writeln(
-                                "Error: Invalid direction " + direction)
+                                "ERROR: Invalid direction " + direction)
                             exit()
                     else:
                         stdio.writeln(
@@ -1568,14 +1576,28 @@ def do_game_loop(board):
             stdio.writeln("Error: Illegal argument")
             exit()
 
+        # check if the player moves back to original position
+        if (initial_board_state == board and moves_made >= 2):
+            stdio.writeln(
+                "ERROR: Piece cannot be returned to starting position")
+            exit()
+
         print_board(board)
+
+        # if not can_player_move(board, player):
+        # if player == 'light':
+        #     stdio.writeln("Dark wins!")
+        #     exit()
+        # else:
+        #     stdio.writeln("Light wins!")
+        #     exit()
 
         if (moves_made >= 2):
 
             # check if the player moves back to original position
             if (initial_board_state == board):
                 stdio.writeln(
-                    "ERROR: Player cannot move back to original position")
+                    "ERROR: Piece cannot be returned to starting position")
                 exit()
 
             # check if the player's turn is over
@@ -1602,11 +1624,9 @@ def do_game_loop(board):
           # win conditions
         if (white_total >= 4):
             stdio.writeln("Light wins!")
-            stdio.writeln("Dark loses")
             exit()
         elif (dark_total >= 4):
             stdio.writeln("Dark wins!")
-            stdio.writeln("Light loses")
             exit()
 
 

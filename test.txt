@@ -1,27 +1,2 @@
-s 2 1 7
-s 2 1 1
-s 2 7 7
-s 2 7 1
-l a 3 3
-l a 6 6
-l a 6 3
-l a 3 6
-d a 4 4
-d a 4 5
-d a 5 4
-d a 5 5
-#
-3 3 l
-3 2 d
-4 4 l
-4 3 d
-6 6 r
-6 7 u
-5 5 r
-5 6 u
-3 6 r
-3 7 d
-4 5 r
-4 6 d
-6 3 l
-6 2 u
+ERROR: Cannot move a 2x2x2 piece on the second move
+ERROR: Cannot move a 2x2X2 piece on the second move
