@@ -861,21 +861,27 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-1][x] = board[y][x]
-                    board[y-2][x] = str(locale_index)
-                    board[y-3][x] = str(locale_index)
-                    board[y][x] = " "
+                    if not isInCheckMode:    
+                        board[y-1][x] = board[y][x]
+                        board[y-2][x] = str(locale_index)
+                        board[y-3][x] = str(locale_index)
+                        board[y][x] = " "
+                    else:
+                        return 1    
                 elif (board[y-1][x] == "s" and board[y-2][x] == "s" and board[y-3][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         if (orientation == "horizontal-x"):
             if (y > 0):
                 if (board[y-1][x] == " " and board[y-1][x+1] == " " and board[y-1][x+2] == " "):
@@ -884,25 +890,31 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-1][x] = board[y][x]
-                    board[y-1][x+1] = str(locale_index)
-                    board[y-1][x+2] = str(locale_index)
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:    
+                        board[y-1][x] = board[y][x]
+                        board[y-1][x+1] = str(locale_index)
+                        board[y-1][x+2] = str(locale_index)
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
+                    else:
+                        return 1    
                 elif (board[y-1][x] == "s" and board[y-1][x+1] == "s" and board[y-1][x+2] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "    
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         if (orientation == "horizontal-y"):
             if (y > 0):
                 if (board[y-3][x] == " "):
@@ -911,23 +923,31 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y-3][x] = board[y][x]
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:    
+                        board[y-3][x] = board[y][x]
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
+                    else:
+                        return 1    
                 elif (board[y-3][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
+                    
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
+                
     elif (direction == 'd'):
         if orientation == "vertical":
             if (y < NUM_ROWS-3):
@@ -937,21 +957,27 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+3][x] = board[y][x]
-                    board[y+2][x] = locale_index
-                    board[y+1][x] = locale_index
-                    board[y][x] = " "
+                    if not isInCheckMode:    
+                        board[y+3][x] = board[y][x]
+                        board[y+2][x] = str(locale_index)
+                        board[y+1][x] = str(locale_index)
+                        board[y][x] = " " 
+                    else:
+                        return 1   
                 elif (board[y+1][x] == "s" and board[y+2][x] == "s" and board[y+3][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                      symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (y < NUM_ROWS-1):
                 if (board[y+1][x] == " " and board[y+1][x+1] == " " and board[y+1][x+2] == " "):
@@ -960,25 +986,31 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+1][x] = board[y][x]
-                    board[y+1][x+1] = str(locale_index)
-                    board[y+1][x+2] = str(locale_index)
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:    
+                        board[y+1][x] = board[y][x]
+                        board[y+1][x+1] = str(locale_index)
+                        board[y+1][x+2] = str(locale_index)
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
+                    else:
+                        return 1    
                 elif (board[y+1][x] == "s" and board[y+1][x+1] == "s" and board[y+1][x+2] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (y < NUM_ROWS-1):
                 if (board[y+1][x] == " "):
@@ -987,23 +1019,29 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y+1][x] = board[y][x]
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:    
+                        board[y+1][x] = board[y][x]
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
+                    else:
+                        return 1    
                 elif (board[y+1][x] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     elif (direction == 'l'):
         # move left
         if (orientation == "vertical"):
@@ -1014,21 +1052,27 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = locale_index
-                    board[y][x-2] = locale_index
-                    board[y][x-3] = board[y][x]
-                    board[y][x] = " "
+                    if not isInCheckMode:    
+                        board[y][x-1] = locale_index
+                        board[y][x-2] = locale_index
+                        board[y][x-3] = board[y][x]
+                        board[y][x] = " "
+                    else:
+                        return 1    
                 elif (board[y][x-1] == "s" and board[y][x-2] == "s" and board[y][x-3] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (x > 0):
                 if (board[y][x-1] == " "):
@@ -1037,23 +1081,29 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = board[y][x]
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:    
+                        board[y][x-1] = board[y][x]
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
+                    else:
+                        return 1    
                 elif (board[y][x-1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (x > 0):
                 if (board[y][x-1] == " " and board[y-1][x-1] == " " and board[y-2][x-1] == " "):
@@ -1062,24 +1112,31 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x-1] = board[y][x]
-                    board[y-1][x-1] = locale_index
-                    board[y-2][x-1] = locale_index
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:
+                        board[y][x-1] = board[y][x]
+                        board[y-1][x-1] = locale_index
+                        board[y-2][x-1] = locale_index
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
+                    else:
+                        return 1    
                 elif (board[y][x-1] == "s" and board[y-1][x-1] == "s" and board[y-2][x-1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     elif (direction == "r"):
         if (orientation == "vertical"):
             if (x < NUM_COLUMNS-3):
@@ -1089,21 +1146,25 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+1] = board[y][x]
-                    board[y][x+2] = locale_index
-                    board[y][x+3] = locale_index
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x+1] = locale_index
+                        board[y][x+2] = locale_index
+                        board[y][x+3] = board[y][x]
+                        board[y][x] = " "    
                 elif (board[y][x+1] == "s" and board[y][x+2] == "s" and board[y][x+3] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-x"):
             if (x < NUM_COLUMNS-3):
                 if (board[y][x+3] == " "):
@@ -1112,23 +1173,29 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+3] = board[y][x]
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:
+                        board[y][x+3] = board[y][x]
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
+                    else:
+                        return 1
                 elif (board[y][x+3] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y][x+1] = " "
-                    board[y][x+2] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y][x+1] = " "
+                        board[y][x+2] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
                                   symbols[0] + " " + symbols[1] + " not free")
-                    exit()
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
         elif (orientation == "horizontal-y"):
             if (x < NUM_COLUMNS-1):
                 if (board[y][x+1] == " " and board[y-1][x+1] == " " and board[y-2][x+1] == " "):
@@ -1137,24 +1204,31 @@ def move_c_piece(symbols, direction, board,isInCheckMode=False):
                     if (int(locale_index.strip()) < 10):
                         locale_index = " " + \
                             locale_index
-                    board[y][x+1] = board[y][x]
-                    board[y-1][x+1] = locale_index
-                    board[y-2][x+1] = locale_index
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:    
+                        board[y][x+1] = board[y][x]
+                        board[y-1][x+1] = locale_index
+                        board[y-2][x+1] = locale_index
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
+                    else:
+                        return 1
                 elif (board[y][x+1] == "s" and board[y-1][x+1] == "s" and board[y-2][x+1] == "s"):
                     # piece is sinked
-                    board[y][x] = " "
-                    board[y-1][x] = " "
-                    board[y-2][x] = " "
+                    if not isInCheckMode:
+                        board[y][x] = " "
+                        board[y-1][x] = " "
+                        board[y-2][x] = " "
                     return 3
                 else:
-                    stdio.writeln("ERROR: Field " +
-                                  symbols[0] + " " + symbols[1] + " not free")
+                    if not isInCheckMode:
+                        stdio.writeln("ERROR: Field " +
+                                    symbols[0] + " " + symbols[1] + " not free")
+                        exit()
             else:
-                stdio.writeln("ERROR: Cannot move beyond the board")
-                exit()
+                if not isInCheckMode:
+                    stdio.writeln("ERROR: Cannot move beyond the board")
+                    exit()
     return 0
 
 
