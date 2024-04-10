@@ -75,7 +75,7 @@ def print_board(board):
             out += get_piece_display(i, j) + '|'
         stdio.writeln(out)
         stdio.writeln(get_row_separator())
-    stdio.writeln("")
+    # stdio.writeln("")
 
 
 def check_sink_range(row, col):
@@ -1551,6 +1551,7 @@ def do_game_loop(board):
                         else:
                             stdio.writeln(
                                 "Error: Invalid direction " + direction)
+                            exit()
                     else:
                         stdio.writeln(
                             "ERROR: Piece does not belong to the correct player")
@@ -1588,15 +1589,15 @@ def do_game_loop(board):
                 player = 'light'
 
             # check if the next player can move
-            if not can_player_move(board, player):
-                if (player == 'light'):
-                    stdio.writeln("Dark wins!")
-                    stdio.writeln("Light loses")
-                    exit()
-                else:
-                    stdio.writeln("Light wins!")
-                    stdio.writeln("Dark loses")
-                    exit()
+            # if not can_player_move(board, player):
+            #     if (player == 'light'):
+            #         stdio.writeln("Dark wins!")
+            #         stdio.writeln("Light loses")
+            #         exit()
+            #     else:
+            #         stdio.writeln("Light wins!")
+            #         stdio.writeln("Dark loses")
+            #         exit()
 
           # win conditions
         if (white_total >= 4):
