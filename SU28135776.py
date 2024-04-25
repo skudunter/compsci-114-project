@@ -253,8 +253,9 @@ def get_board_setup_from_commandline():
                                                         # all fields are within the inner board
 
                                                         # index representing the bottom left most field of that piece
-                                                        index = (
-                                                            int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                        index = (int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                        row = NUM_ROWS - 1 - (index // NUM_COLUMNS)
+                                                        column = index % NUM_COLUMNS
                                                         # pad the index on the right by a space if it is one digit
                                                         if (index < 10):
                                                             index = " " + \
@@ -1461,6 +1462,7 @@ def do_game_loop(board):
     dark_total = 0
     total_moves = 0
     initial_board_state = return_copy_of_board(board)
+    
     while True:
         num_pieces = 0
         for i in range(len(board)):

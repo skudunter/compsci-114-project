@@ -1,2 +1,0 @@
-ERROR: Cannot move a 2x2x2 piece on the second move
-ERROR: Cannot move a 2x2X2 piece on the second move
