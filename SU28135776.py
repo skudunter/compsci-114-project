@@ -9,24 +9,14 @@ initial_board_state = []
 
 
 def check_input_validation():
-    # checks whether the input conforms to the standards set out otherwise raises an error
     global NUM_ROWS, NUM_COLUMNS, GUI_MODE
-    if len(sys.argv) > 4:
-        stdio.writeln('ERROR: Too many arguments')
-        sys.exit(1)
-    elif len(sys.argv) < 4:
-        stdio.writeln('ERROR: Too few arguments')
+    if len(sys.argv) != 4:
+        stdio.writeln('ERROR: Invalid number of arguments')
         sys.exit(1)
     try:
-        if (int(sys.argv[3]) != 0) and (int(sys.argv[3]) != 1):
+        NUM_ROWS, NUM_COLUMNS, GUI_MODE = map(int, sys.argv[1:])
+        if NUM_ROWS not in [8, 9, 10] or NUM_COLUMNS not in [8, 9, 10] or GUI_MODE not in [0, 1]:
             raise ValueError
-        if (int(sys.argv[1]) not in [8, 9, 10]):
-            raise ValueError
-        if (int(sys.argv[2]) not in [8, 9, 10]):
-            raise ValueError
-        NUM_ROWS = int(sys.argv[1])
-        NUM_COLUMNS = int(sys.argv[2])
-        GUI_MODE = bool(int(sys.argv[3]))
     except ValueError:
         stdio.writeln('ERROR: Invalid argument')
         sys.exit(1)
