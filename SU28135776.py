@@ -33,49 +33,35 @@ def check_input_validation():
 
 
 def print_board(board):
-    # vars for the length and width of the board
-    num_rows = len(board)
-    num_cols = len(board[0])
-
     def get_row_separator():
-        # returns a row separator string
         return '   +--' + '--'.join(['+' for _ in range(num_cols)])
 
     def get_piece_display(row, col):
-        # returns the string to display for a given piece
         piece = board[row][col]
         if piece == ' ':
-            # empty field
             return '  '
         elif piece == 's':
-            # sink field
             return ' s'
         elif piece == 'x':
-            # blocked field
             return ' x'
-        elif piece.islower():
-            # piece is light
-            return ' ' + piece
-        elif piece.isupper():
-            # peice is dark
+        elif piece.isalpha():
             return ' ' + piece
         elif len(piece) == 2:
-            # number representing bottom left most piece
             return piece
         return "  "
 
-    # write all the numbers at the top
-    stdio.writeln('    ' + '  '.join([str(i) for i in range(num_cols)]))
+    num_rows = len(board)
+    num_cols = len(board[0])
+
+    stdio.writeln('    ' + '  '.join(map(str, range(num_cols))))
     stdio.writeln(get_row_separator())
 
-    # display the board
     for i in range(num_rows):
         out = ' ' + str(num_rows - i-1) + ' |'
         for j in range(num_cols):
             out += get_piece_display(i, j) + '|'
         stdio.writeln(out)
         stdio.writeln(get_row_separator())
-    # stdio.writeln("")
 
 
 def check_sink_range(row, col):
