@@ -18,6 +18,7 @@ errors = {
     "cannot_move_beyond_board": "ERROR: Cannot move beyond the board",
 }
 
+
 def check_input_validation():
     # check if the number of arguments and type is correct
     global NUM_ROWS, NUM_COLUMNS, GUI_MODE
@@ -94,10 +95,12 @@ def check_piece_type(piece_object, piece_type):
 
 def check_sink_adjacent(row, col, board):
     # checks if sinks are placed next to each others
-    return any((col > 0 and board[row][col-1] == 's'),
-               (col < len(board[0]) - 1 and board[row][col+1] == 's'),
-               (row > 0 and board[row-1][col] == 's'),
-               (row < len(board) - 1 and board[row+1][col] == 's'))
+    return any([
+        col > 0 and board[row][col-1] == 's',
+        col < len(board[0]) - 1 and board[row][col+1] == 's',
+        row > 0 and board[row-1][col] == 's',
+        row < len(board) - 1 and board[row+1][col] == 's'
+    ])
 
 
 def get_board_setup_from_commandline():
@@ -112,6 +115,12 @@ def get_board_setup_from_commandline():
             # Exit the loop if '#' is found in the line
             break
         symbols = line.split(" ")
+
+        if (check_index_on_board(int(symbols[len(symbols)-1]), int(symbols[len(symbols)-2])) == False):
+            stdio.writeln(errors["field_not_on_board"].format(
+                symbols[2], symbols[3]))
+            sys.exit(1)
+
         if (len(symbols) == 4):
             # either a piece or a sink
             if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
