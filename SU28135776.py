@@ -105,12 +105,10 @@ def check_sink_adjacent(row, col, board):
     ])
 
 
-def handle_sink_input(symbols, board):
+def handle_sink_input(symbols, board,y,x):
     # a sink
     if (check_sink_range(int(symbols[2]), int(symbols[3]))):
         # sink is within the outer 3 columns and rows
-        x = int(symbols[3])
-        y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
         if (board[y][x] == ' '):
             # empty field
             if (symbols[1] == "2"):
@@ -189,10 +187,7 @@ def handle_sink_input(symbols, board):
         exit()
 
 
-def handle_piece_input(symbols, board):
-    # a piece
-    x = int(symbols[3])
-    y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
+def handle_piece_input(symbols, board,y,x):
     if (check_piece_range(int(symbols[2]), int(symbols[3]))):
         # piece is not within the outer 3 columns and rows
         if board[y][x] == ' ':
@@ -293,10 +288,10 @@ def get_board_setup_from_commandline():
             if (check_piece_type(symbols[0], symbols[1])):
                 if (symbols[0] == "s"):
                     # a sink
-                    handle_sink_input(symbols, board)
+                    handle_sink_input(symbols, board,y,x)
                 else:
                     # a piece
-                    handle_piece_input(symbols, board)
+                    handle_piece_input(symbols, board,y,x)
             else:
                 stdio.writeln(
                     errors["piece_type_invalid"].format(symbols[1]))
