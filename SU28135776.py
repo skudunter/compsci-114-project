@@ -6,20 +6,30 @@ NUM_ROWS = 10
 NUM_COLUMNS = 10
 GUI_MODE = False
 initial_board_state = []
-
+errors = {
+    "num_arg": "ERROR: Invalid number of arguments",
+    "invalid_arg": "ERROR: Invalid argument",
+    "invalid_input": "ERROR: Invalid input",
+    "field_not_free": "ERROR: Field {} {} not free",
+    "field_not_on_board": "ERROR: Field {} {} not on board",
+    "sink_wrong_position": "ERROR: Sink in the wrong position",
+    "piece_wrong_position": "ERROR: Piece in the wrong position",
+    "sink_next_to_sink": "ERROR: Sink cannot be next to another sink",
+    "cannot_move_beyond_board": "ERROR: Cannot move beyond the board",
+}
 
 def check_input_validation():
     # check if the number of arguments and type is correct
     global NUM_ROWS, NUM_COLUMNS, GUI_MODE
     if len(sys.argv) != 4:
-        stdio.writeln('ERROR: Invalid number of arguments')
+        stdio.writeln(errors["num_arg"])
         sys.exit(1)
     try:
         NUM_ROWS, NUM_COLUMNS, GUI_MODE = map(int, sys.argv[1:])
         if NUM_ROWS not in [8, 9, 10] or NUM_COLUMNS not in [8, 9, 10] or GUI_MODE not in [0, 1]:
             raise ValueError
     except ValueError:
-        stdio.writeln('ERROR: Invalid argument')
+        stdio.writeln(errors["invalid_arg"])
         sys.exit(1)
 
 
