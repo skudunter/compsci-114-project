@@ -16,6 +16,8 @@ errors = {
     "piece_wrong_position": "ERROR: Piece in the wrong position",
     "sink_next_to_sink": "ERROR: Sink cannot be next to another sink",
     "cannot_move_beyond_board": "ERROR: Cannot move beyond the board",
+    "piece_type_invalid": "ERROR: Invalid piece type {}",
+    "object_type_invalid": "ERROR: Invalid object type {}",
 }
 
 
@@ -252,9 +254,16 @@ def handle_piece_input(symbols, board):
             "ERROR: Piece in the wrong position")
         exit()
 
+def handle_blocked_field(symbols, board,y,x):
+    if (board[y][x] == " "):
+                board[y][x] = 'x'
+    else:
+        stdio.writeln(
+            errors["field_not_free"].format(symbols[1], symbols[2]))
+        exit()
 
 def get_board_setup_from_commandline():
-    # init board 2d array
+    # get the board setup from the command line and populate the 2D array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
 
     while True:
@@ -266,55 +275,35 @@ def get_board_setup_from_commandline():
             break
         symbols = line.split(" ")
 
+        if (len(symbols) not in [3, 4]):
+            stdio.writeln(errors["invalid_input"])
+            sys.exit(1)
         if (check_index_on_board(int(symbols[len(symbols)-1]), int(symbols[len(symbols)-2])) == False):
             stdio.writeln(errors["field_not_on_board"].format(
                 symbols[2], symbols[3]))
             sys.exit(1)
+        if (symbols[0] not in ["x", "l", "d", "s"]):
+            stdio.writeln(errors["object_type_invalid"].format(symbols[0]))
+            sys.exit(1)
+
+        x = int(symbols[len(symbols)-1])
+        y = (NUM_ROWS-1 - int(symbols[len(symbols)-2])) % NUM_ROWS
 
         if (len(symbols) == 4):
-            # either a piece or a sink
-            if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
-                if (symbols[0] in ['l', 'd', 's']):
-                    # valid object type
-                    if (check_piece_type(symbols[0], symbols[1])):
-                        # peice type aligns to object type
-                        if (symbols[0] == "s"):
-                            handle_sink_input(symbols, board)
-                        else:
-                            handle_piece_input(symbols, board)
-                    else:
-                        stdio.writeln(
-                            "ERROR: Invalid piece type " + symbols[1])
-                        exit()
+            if (check_piece_type(symbols[0], symbols[1])):
+                if (symbols[0] == "s"):
+                    # a sink
+                    handle_sink_input(symbols, board)
                 else:
-                    stdio.writeln("ERROR: Invalid object type " + symbols[0])
-                    exit()
+                    # a piece
+                    handle_piece_input(symbols, board)
             else:
-                stdio.writeln("ERROR: Field " +
-                              symbols[2] + " " + symbols[3] + " not on board")
+                stdio.writeln(
+                    errors["piece_type_invalid"].format(symbols[1]))
                 exit()
-        elif (len(symbols) == 3):
-            # a blocked field
-            x = int(symbols[2])
-            y = (NUM_ROWS-1 - int(symbols[1])) % NUM_ROWS
-
-            if (check_index_on_board(int(symbols[1]), int(symbols[2]))):
-                # blocked field is on the board
-                if (symbols[0] == "x"):
-                    # just making sure it is a blocked field
-                    if (board[y][x] == " "):
-                        # empty field
-                        board[y][x] = 'x'
-                    else:
-                        stdio.writeln(
-                            "ERROR: Field " + symbols[1] + " " + symbols[2] + " not free")
-                        exit()
-                else:
-                    stdio.writeln("ERROR: Invalid object type " + symbols[0])
-                    exit()
         else:
-            stdio.writeln("ERROR: Invalid input")
-            exit()
+            # a blocked field
+            handle_blocked_field(symbols, board,y,x)
     return board
 
 
