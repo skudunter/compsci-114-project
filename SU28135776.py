@@ -9,6 +9,7 @@ initial_board_state = []
 
 
 def check_input_validation():
+    # check if the number of arguments and type is correct
     global NUM_ROWS, NUM_COLUMNS, GUI_MODE
     if len(sys.argv) != 4:
         stdio.writeln('ERROR: Invalid number of arguments')
@@ -23,6 +24,7 @@ def check_input_validation():
 
 
 def print_board(board):
+    # prints the board to the console
     def get_row_separator():
         return '   +--' + '--'.join(['+' for _ in range(num_cols)])
 
@@ -55,26 +57,18 @@ def print_board(board):
 
 
 def check_sink_range(row, col):
-    # checks if the sink is within the outer 3 columns and rows
-    if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
-        return False
-    else:
-        return True
+    # check if sink in outer 3 columns and rows
+    return not ((2 < col < NUM_COLUMNS - 3) and (2 < row < NUM_ROWS - 3))
 
 
 def check_piece_range(row, col):
-    # checks if the piece is not within the outer 3 columns and rows
-    if ((col > 2) and (col < NUM_COLUMNS - 3) and (row > 2) and (row < NUM_ROWS - 3)):
-        return True
-    else:
-        return False
+    # check if piece not in outer 3 columns and rows
+    return ((2 < col < NUM_COLUMNS - 3) and (2 < row < NUM_ROWS - 3))
 
 
 def check_index_on_board(row, col):
-    # checks if a peice is legitimately on the board
-    if (row not in range(0, NUM_ROWS) or col not in range(0, NUM_COLUMNS)):
-        return False
-    return True
+    # checks if the given index is on the board
+    return 0 <= row < NUM_ROWS and 0 <= col < NUM_COLUMNS
 
 
 def check_piece_type(piece_object, piece_type):
@@ -89,16 +83,11 @@ def check_piece_type(piece_object, piece_type):
 
 
 def check_sink_adjacent(row, col, board):
-    # checks if the sink is adjacent to a sink
-    try:
-        if (col > 0 and board[row][col-1] == 's') or \
-           (col < len(board[0]) - 1 and board[row][col+1] == 's') or \
-           (row > 0 and board[row-1][col] == 's') or \
-           (row < len(board) - 1 and board[row+1][col] == 's'):
-            return True
-    except IndexError:
-        pass
-    return False
+    # checks if sinks are placed next to each others
+    return any((col > 0 and board[row][col-1] == 's'),
+               (col < len(board[0]) - 1 and board[row][col+1] == 's'),
+               (row > 0 and board[row-1][col] == 's'),
+               (row < len(board) - 1 and board[row+1][col] == 's'))
 
 
 def get_board_setup_from_commandline():
@@ -229,8 +218,10 @@ def get_board_setup_from_commandline():
                                                         # all fields are within the inner board
 
                                                         # index representing the bottom left most field of that piece
-                                                        index = (int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
-                                                        row = NUM_ROWS - 1 - (index // NUM_COLUMNS)
+                                                        index = (
+                                                            int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                                        row = NUM_ROWS - 1 - \
+                                                            (index // NUM_COLUMNS)
                                                         column = index % NUM_COLUMNS
                                                         # pad the index on the right by a space if it is one digit
                                                         if (index < 10):
@@ -343,7 +334,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + str(int(symbols[0]) + 1 )+ " " + symbols[1] + " not free")
+                        "ERROR: Field " + str(int(symbols[0]) + 1) + " " + symbols[1] + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -366,7 +357,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + str(int(symbols[0]) - 1 ) + " " + symbols[1] + " not free")
+                        "ERROR: Field " + str(int(symbols[0]) - 1) + " " + symbols[1] + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -389,7 +380,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[1]) - 1 )+ " not free")
+                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[1]) - 1) + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -413,7 +404,7 @@ def move_a_piece(symbols, direction, board, isInCheckMode=False):
             else:
                 if not isInCheckMode:
                     stdio.writeln(
-                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[0]) + 1 )+ " not free")
+                        "ERROR: Field " + symbols[0] + " " + str(int(symbols[0]) + 1) + " not free")
                     exit()
         else:
             if not isInCheckMode:
@@ -1438,7 +1429,7 @@ def do_game_loop(board):
     dark_total = 0
     total_moves = 0
     initial_board_state = return_copy_of_board(board)
-    
+
     while True:
         num_pieces = 0
         for i in range(len(board)):
