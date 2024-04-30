@@ -103,6 +103,156 @@ def check_sink_adjacent(row, col, board):
     ])
 
 
+def handle_sink_input(symbols, board):
+    # a sink
+    if (check_sink_range(int(symbols[2]), int(symbols[3]))):
+        # sink is within the outer 3 columns and rows
+        x = int(symbols[3])
+        y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
+        if (board[y][x] == ' '):
+            # empty field
+            if (symbols[1] == "2"):
+                # a 2x2 sink
+                if (check_sink_range(x+1, y)):
+                    if (check_sink_range(x, y-1)):
+                        if (check_sink_range(x+1, y-1)):
+                            # all fields are within the outer 3 columns or rows
+                            if (check_index_on_board(int(symbols[2])+1, int(symbols[3])) and check_index_on_board(int(symbols[2]), int(symbols[3])+1) and check_index_on_board(int(symbols[2])+1, int(symbols[3])+1)):
+                                if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
+                                    # all fields are empty
+                                    if (not check_sink_adjacent(y, x, board)):
+                                        if (not check_sink_adjacent(y, x+1, board)):
+                                            if (not check_sink_adjacent(y-1, x, board)):
+                                                if (not check_sink_adjacent(y-1, x+1, board)):
+                                                    # no sinks adjaceant to this sink
+                                                    board[y][x] = "s"
+                                                    board[y][x +
+                                                             1] = "s"
+                                                    board[y -
+                                                          1][x] = "s"
+                                                    board[y-1][x +
+                                                               1] = "s"
+                                                else:
+                                                    stdio.writeln(
+                                                        "ERROR: Sink cannot be next to another sink")
+                                                    exit()
+                                            else:
+                                                stdio.writeln(
+                                                    "ERROR: Sink cannot be next to another sink")
+                                                exit()
+                                        else:
+                                            stdio.writeln(
+                                                "ERROR: Sink cannot be next to another sink")
+                                            exit()
+                                    else:
+                                        stdio.writeln(
+                                            "ERROR: Sink cannot be next to another sink")
+                                        exit()
+                                else:
+                                    stdio.writeln(
+                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                                    exit()
+                            else:
+                                stdio.writeln("ERROR: Field " +
+                                              symbols[2] + " " + symbols[3] + " not on board")
+                                exit()
+                        else:
+                            stdio.writeln(
+                                "ERROR: Sink in the wrong position")
+                            exit()
+                    else:
+                        stdio.writeln(
+                            "ERROR: Sink in the wrong position")
+                        exit()
+                else:
+                    stdio.writeln(
+                        "ERROR: Sink in the wrong position")
+                    exit()
+            else:
+                # a 1x1 sink
+                if (not check_sink_adjacent(y, x, board)):
+                    # no sinks adjaceant to this sink
+                    board[y][x] = "s"
+                else:
+                    stdio.writeln(
+                        "ERROR: Sink cannot be next to another sink")
+                    exit()
+        else:
+            stdio.writeln(
+                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+            exit()
+    else:
+        stdio.writeln(
+            "ERROR: Sink in the wrong position")
+        exit()
+
+
+def handle_piece_input(symbols, board):
+    # a piece
+    x = int(symbols[3])
+    y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
+    if (check_piece_range(int(symbols[2]), int(symbols[3]))):
+        # piece is not within the outer 3 columns and rows
+        if board[y][x] == ' ':
+            # empty field
+            # symbol var that represents the piece type and if it is dark or light
+            symbol = ''
+            if (symbols[0] == 'l'):
+                symbol = symbols[1].lower()
+            elif (symbols[0] == 'd'):
+                symbol = symbols[1].upper()
+            board[y][x] = symbol
+            if (symbols[1] == "d"):
+                # 2x2 piece
+                if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
+                    # all fields empty
+                    if (check_piece_range(x+1, y)):
+                        if (check_piece_range(x, y-1)):
+                            if (check_piece_range(x+1, y-1)):
+                                # all fields are within the inner board
+
+                                # index representing the bottom left most field of that piece
+                                index = (
+                                    int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
+                                row = NUM_ROWS - 1 - \
+                                    (index // NUM_COLUMNS)
+                                column = index % NUM_COLUMNS
+                                # pad the index on the right by a space if it is one digit
+                                if (index < 10):
+                                    index = " " + \
+                                        str(index)
+                                board[y][x +
+                                         1] = str(index)
+                                board[y -
+                                      1][x] = str(index)
+                                board[y-1][x +
+                                           1] = str(index)
+                            else:
+                                stdio.writeln(
+                                    "ERROR: Piece in the wrong position")
+                                exit()
+                        else:
+                            stdio.writeln(
+                                "ERROR: Piece in the wrong position")
+                            exit()
+                    else:
+                        stdio.writeln(
+                            "ERROR: Piece in the wrong position")
+                        exit()
+                else:
+                    stdio.writeln(
+                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+                    exit()
+        else:
+            stdio.writeln(
+                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+            exit()
+    else:
+        stdio.writeln(
+            "ERROR: Piece in the wrong position")
+        exit()
+
+
 def get_board_setup_from_commandline():
     # init board 2d array
     board = [[' ' for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
@@ -124,158 +274,14 @@ def get_board_setup_from_commandline():
         if (len(symbols) == 4):
             # either a piece or a sink
             if (check_index_on_board(int(symbols[2]), int(symbols[3]))):
-                # piece or sink is on the board
-                # symbols[0] is the object type and symbols[1] is the piece type
                 if (symbols[0] in ['l', 'd', 's']):
                     # valid object type
                     if (check_piece_type(symbols[0], symbols[1])):
                         # peice type aligns to object type
                         if (symbols[0] == "s"):
-                            # a sink
-                            if (check_sink_range(int(symbols[2]), int(symbols[3]))):
-                                # sink is within the outer 3 columns and rows
-                                x = int(symbols[3])
-                                y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
-                                if (board[y][x] == ' '):
-                                    # empty field
-                                    if (symbols[1] == "2"):
-                                        # a 2x2 sink
-                                        if (check_sink_range(x+1, y)):
-                                            if (check_sink_range(x, y-1)):
-                                                if (check_sink_range(x+1, y-1)):
-                                                    # all fields are within the outer 3 columns or rows
-                                                    if (check_index_on_board(int(symbols[2])+1, int(symbols[3])) and check_index_on_board(int(symbols[2]), int(symbols[3])+1) and check_index_on_board(int(symbols[2])+1, int(symbols[3])+1)):
-                                                        if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
-                                                            # all fields are empty
-                                                            if (not check_sink_adjacent(y, x, board)):
-                                                                if (not check_sink_adjacent(y, x+1, board)):
-                                                                    if (not check_sink_adjacent(y-1, x, board)):
-                                                                        if (not check_sink_adjacent(y-1, x+1, board)):
-                                                                            # no sinks adjaceant to this sink
-                                                                            board[y][x] = "s"
-                                                                            board[y][x +
-                                                                                     1] = "s"
-                                                                            board[y -
-                                                                                  1][x] = "s"
-                                                                            board[y-1][x +
-                                                                                       1] = "s"
-                                                                        else:
-                                                                            stdio.writeln(
-                                                                                "ERROR: Sink cannot be next to another sink")
-                                                                            exit()
-                                                                    else:
-                                                                        stdio.writeln(
-                                                                            "ERROR: Sink cannot be next to another sink")
-                                                                        exit()
-                                                                else:
-                                                                    stdio.writeln(
-                                                                        "ERROR: Sink cannot be next to another sink")
-                                                                    exit()
-                                                            else:
-                                                                stdio.writeln(
-                                                                    "ERROR: Sink cannot be next to another sink")
-                                                                exit()
-                                                        else:
-                                                            stdio.writeln(
-                                                                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                                            exit()
-                                                    else:
-                                                        stdio.writeln("ERROR: Field " +
-                                                                      symbols[2] + " " + symbols[3] + " not on board")
-                                                        exit()
-                                                else:
-                                                    stdio.writeln(
-                                                        "ERROR: Sink in the wrong position")
-                                                    exit()
-                                            else:
-                                                stdio.writeln(
-                                                    "ERROR: Sink in the wrong position")
-                                                exit()
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Sink in the wrong position")
-                                            exit()
-                                    else:
-                                        # a 1x1 sink
-                                        if (not check_sink_adjacent(y, x, board)):
-                                            # no sinks adjaceant to this sink
-                                            board[y][x] = "s"
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Sink cannot be next to another sink")
-                                            exit()
-                                else:
-                                    stdio.writeln(
-                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                    exit()
-                            else:
-                                stdio.writeln(
-                                    "ERROR: Sink in the wrong position")
-                                exit()
+                            handle_sink_input(symbols, board)
                         else:
-                            # a piece
-                            x = int(symbols[3])
-                            y = (NUM_ROWS-1 - int(symbols[2])) % NUM_ROWS
-                            if (check_piece_range(int(symbols[2]), int(symbols[3]))):
-                                # piece is not within the outer 3 columns and rows
-                                if board[y][x] == ' ':
-                                    # empty field
-                                    # symbol var that represents the piece type and if it is dark or light
-                                    symbol = ''
-                                    if (symbols[0] == 'l'):
-                                        symbol = symbols[1].lower()
-                                    elif (symbols[0] == 'd'):
-                                        symbol = symbols[1].upper()
-                                    board[y][x] = symbol
-                                    if (symbols[1] == "d"):
-                                        # 2x2 piece
-                                        if (board[y][x+1] == " " and board[y-1][x] == " " and board[y-1][x+1] == " "):
-                                            # all fields empty
-                                            if (check_piece_range(x+1, y)):
-                                                if (check_piece_range(x, y-1)):
-                                                    if (check_piece_range(x+1, y-1)):
-                                                        # all fields are within the inner board
-
-                                                        # index representing the bottom left most field of that piece
-                                                        index = (
-                                                            int(symbols[2]) * NUM_COLUMNS) + int(symbols[3])
-                                                        row = NUM_ROWS - 1 - \
-                                                            (index // NUM_COLUMNS)
-                                                        column = index % NUM_COLUMNS
-                                                        # pad the index on the right by a space if it is one digit
-                                                        if (index < 10):
-                                                            index = " " + \
-                                                                str(index)
-                                                        board[y][x +
-                                                                 1] = str(index)
-                                                        board[y -
-                                                              1][x] = str(index)
-                                                        board[y-1][x +
-                                                                   1] = str(index)
-                                                    else:
-                                                        stdio.writeln(
-                                                            "ERROR: Piece in the wrong position")
-                                                        exit()
-                                                else:
-                                                    stdio.writeln(
-                                                        "ERROR: Piece in the wrong position")
-                                                    exit()
-                                            else:
-                                                stdio.writeln(
-                                                    "ERROR: Piece in the wrong position")
-                                                exit()
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                            exit()
-                                else:
-                                    stdio.writeln(
-                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                    exit()
-                            else:
-                                stdio.writeln(
-                                    "ERROR: Piece in the wrong position")
-                                exit()
+                            handle_piece_input(symbols, board)
                     else:
                         stdio.writeln(
                             "ERROR: Invalid piece type " + symbols[1])
