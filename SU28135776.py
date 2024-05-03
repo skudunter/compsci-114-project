@@ -105,89 +105,40 @@ def check_sink_adjacent(row, col, board):
     ])
 
 
-def handle_sink_input(symbols, board,y,x):
-    # a sink
-    if (check_sink_range(int(symbols[2]), int(symbols[3]))):
-        # sink is within the outer 3 columns and rows
-        if (board[y][x] == ' '):
-            # empty field
-            if (symbols[1] == "2"):
-                # a 2x2 sink
-                if (check_sink_range(x+1, y)):
-                    if (check_sink_range(x, y-1)):
-                        if (check_sink_range(x+1, y-1)):
-                            # all fields are within the outer 3 columns or rows
-                            if (check_index_on_board(int(symbols[2])+1, int(symbols[3])) and check_index_on_board(int(symbols[2]), int(symbols[3])+1) and check_index_on_board(int(symbols[2])+1, int(symbols[3])+1)):
-                                if (board[y][x+1] == ' ' and board[y-1][x] == ' ' and board[y-1][x+1] == ' '):
-                                    # all fields are empty
-                                    if (not check_sink_adjacent(y, x, board)):
-                                        if (not check_sink_adjacent(y, x+1, board)):
-                                            if (not check_sink_adjacent(y-1, x, board)):
-                                                if (not check_sink_adjacent(y-1, x+1, board)):
-                                                    # no sinks adjaceant to this sink
-                                                    board[y][x] = "s"
-                                                    board[y][x +
-                                                             1] = "s"
-                                                    board[y -
-                                                          1][x] = "s"
-                                                    board[y-1][x +
-                                                               1] = "s"
-                                                else:
-                                                    stdio.writeln(
-                                                        "ERROR: Sink cannot be next to another sink")
-                                                    exit()
-                                            else:
-                                                stdio.writeln(
-                                                    "ERROR: Sink cannot be next to another sink")
-                                                exit()
-                                        else:
-                                            stdio.writeln(
-                                                "ERROR: Sink cannot be next to another sink")
-                                            exit()
-                                    else:
-                                        stdio.writeln(
-                                            "ERROR: Sink cannot be next to another sink")
-                                        exit()
-                                else:
-                                    stdio.writeln(
-                                        "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
-                                    exit()
-                            else:
-                                stdio.writeln("ERROR: Field " +
-                                              symbols[2] + " " + symbols[3] + " not on board")
-                                exit()
-                        else:
-                            stdio.writeln(
-                                "ERROR: Sink in the wrong position")
-                            exit()
+def handle_sink_input(symbols, board, y, x):
+    if (check_sink_range(y, x)):
+        if board[y][x] == ' ':
+            if symbols[1] == "2":
+                if all(check_index_on_board[i][j] for i in range(y - 1, y + 1) for j in range(x, x + 2)):
+                    if all(board[i][j] == ' ' for i in range(y - 1, y + 1) for j in range(x, x + 2)):
+                        board[y][x] = 's'
+                        board[y][x + 1] = 's'
+                        board[y - 1][x] = 's'
+                        board[y - 1][x + 1] = 's'
                     else:
-                        stdio.writeln(
-                            "ERROR: Sink in the wrong position")
+                        print("ERROR: Field not free")
                         exit()
                 else:
-                    stdio.writeln(
-                        "ERROR: Sink in the wrong position")
+                    print("ERROR: Sink in the wrong position")
+                    exit()
+            elif symbols[1] == "1":
+                if not check_sink_adjacent(y, x, board):
+                    board[y][x] = 's'
+                else:
+                    print("ERROR: Sink cannot be next to another sink")
                     exit()
             else:
-                # a 1x1 sink
-                if (not check_sink_adjacent(y, x, board)):
-                    # no sinks adjaceant to this sink
-                    board[y][x] = "s"
-                else:
-                    stdio.writeln(
-                        "ERROR: Sink cannot be next to another sink")
-                    exit()
+                print("ERROR: Invalid sink size")
+                exit()
         else:
-            stdio.writeln(
-                "ERROR: Field " + symbols[2] + " " + symbols[3] + " not free")
+            print("ERROR: Field not free")
             exit()
     else:
-        stdio.writeln(
-            "ERROR: Sink in the wrong position")
+        print("ERROR: Sink in the wrong position")
         exit()
 
 
-def handle_piece_input(symbols, board,y,x):
+def handle_piece_input(symbols, board, y, x):
     if (check_piece_range(int(symbols[2]), int(symbols[3]))):
         # piece is not within the outer 3 columns and rows
         if board[y][x] == ' ':
@@ -249,13 +200,15 @@ def handle_piece_input(symbols, board,y,x):
             "ERROR: Piece in the wrong position")
         exit()
 
-def handle_blocked_field(symbols, board,y,x):
+
+def handle_blocked_field(symbols, board, y, x):
     if (board[y][x] == " "):
-                board[y][x] = 'x'
+        board[y][x] = 'x'
     else:
         stdio.writeln(
             errors["field_not_free"].format(symbols[1], symbols[2]))
         exit()
+
 
 def get_board_setup_from_commandline():
     # get the board setup from the command line and populate the 2D array
@@ -288,17 +241,17 @@ def get_board_setup_from_commandline():
             if (check_piece_type(symbols[0], symbols[1])):
                 if (symbols[0] == "s"):
                     # a sink
-                    handle_sink_input(symbols, board,y,x)
+                    handle_sink_input(symbols, board, y, x)
                 else:
                     # a piece
-                    handle_piece_input(symbols, board,y,x)
+                    handle_piece_input(symbols, board, y, x)
             else:
                 stdio.writeln(
                     errors["piece_type_invalid"].format(symbols[1]))
                 exit()
         else:
             # a blocked field
-            handle_blocked_field(symbols, board,y,x)
+            handle_blocked_field(symbols, board, y, x)
     return board
 
 
